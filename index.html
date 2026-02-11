@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Check-in App - Complete</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes hourglassFlip {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      40% { transform: rotate(180deg) scale(1); }
+      60% { transform: rotate(180deg) scale(1.1); }
+    }
+    
+    .hourglass-animate {
+      animation: hourglassFlip 3s ease-in-out infinite;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+    .fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
+    .scale-in { animation: scaleIn 0.4s ease-out forwards; }
+    
+    .team-member { transition: transform 0.2s ease; }
+    .team-member:hover { transform: translateY(-4px); }
+    
+    .check-in-btn { transition: all 0.2s ease; }
+    .check-in-btn:hover { transform: scale(1.02); box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.3); }
+    .check-in-btn:active { transform: scale(0.98); }
+    
+    .mood-btn { transition: all 0.2s ease; }
+    .mood-btn:hover:not(.selected) { transform: scale(1.02); }
+    .mood-btn:active:not(:disabled) { transform: scale(0.98); }
+    
+    .submit-btn { transition: all 0.2s ease; }
+    .submit-btn:hover { transform: scale(1.02); }
+    .submit-btn:active { transform: scale(0.98); }
+    
+    .additional-fields {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .additional-fields.show {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 1.5rem;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+    
+    @keyframes bounce-subtle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.05); }
+    }
+    
+    @keyframes rotate-clockwise {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes confetti-fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    .error-shake {
+      animation: shake 0.5s;
+    }
+    
+    .error-field {
+      border-color: #EF4444 !important;
+      border-width: 1.5px !important;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  
+  <!-- SCREEN 1: Home Page -->
+  <div id="screen1" class="screen active">
+    <div class="min-h-screen px-4 py-6 pb-14 max-w-md mx-auto">
+      <div class="flex items-center justify-between mb-8 text-sm fade-in-down">
+        <span id="clock" class="font-semibold">9:41</span>
+      </div>
+
+      <div class="flex items-start justify-between mb-8 mt-12 fade-in-down" style="animation-delay: 0.1s">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-1">Hello, Advait Kulkarni</h1>
+          <p id="current-date" class="text-gray-500 text-sm"></p>
+        </div>
+        <div class="w-14 h-14 bg-cyan-100 rounded-full flex items-center justify-center text-3xl cursor-pointer hover:scale-105 transition-transform">🐄</div>
+      </div>
+
+      <!-- Pending Update / Success Badge -->
+      <div id="pending-update" class="flex flex-col items-center justify-center py-20 mb-8 fade-in-up" style="animation-delay: 0.2s">
+        <div class="text-5xl mb-6 hourglass-animate">⏳</div>
+        <p class="text-gray-600 text-lg fade-in-up" style="animation-delay: 0.4s">Your daily update is pending...</p>
+      </div>
+
+      <div id="success-badge" class="hidden flex-col items-center justify-center py-12 mb-8">
+        <div class="relative flex items-center justify-center mb-6">
+          <svg width="140" height="140" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
+            <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
+          </svg>
+          <svg width="60" height="60" viewBox="0 0 60 60" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <path d="M15 30 L26 41 L45 19" stroke="#059669" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2 text-center">You're all set!</h2>
+        <p class="text-gray-600 text-center">Your Check-in has been submitted</p>
+      </div>
+
+      <!-- Check-in Button -->
+      <button id="check-in-btn" onclick="goToScreen2()" class="w-full bg-rose-400 hover:bg-rose-500 text-white text-lg font-medium py-4 rounded-2xl mb-8 shadow-sm check-in-btn fade-in-up" style="animation-delay: 0.3s">
+        Check-in Now
+      </button>
+
+      <div class="fade-in-up" style="animation-delay: 0.4s">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Team updates</h2>
+        <p id="team-status" class="text-gray-500 text-sm mb-6">4 of 6 checked in • 0 blockers</p>
+        <div class="grid grid-cols-3 gap-x-4 gap-y-6">
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.5s">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🦉</div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Aarav Sharma</p>
+          </div>
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.6s">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🦊</div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Ananya Iyer</p>
+          </div>
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.7s">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🐥</div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Ishaan Mehta</p>
+          </div>
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.8s">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🐑</div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Riyas Ahmed</p>
+          </div>
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.9s">
+            <div class="relative">
+              <div id="advait-card" class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200">🐄</div>
+              <div id="advait-blocker-icon" class="hidden absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                <span class="text-white text-xs font-bold">!</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Advait Kulkarni</p>
+          </div>
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 1s">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200">🐵</div>
+            <p class="text-sm text-gray-900 text-center font-medium leading-tight">Vihaan Patel</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Check-in Page -->
+  <div id="screen2" class="screen">
+    <div class="min-h-screen bg-gray-50">
+      <div class="max-w-md mx-auto px-4 py-6 pb-32">
+        <div class="flex items-center justify-between mb-6 text-sm">
+          <span id="clock-screen2" class="font-semibold">9:41</span>
+        </div>
+
+        <div class="flex items-center gap-4 mb-8">
+          <button onclick="goToScreen1()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.921 7.5L7.714 13.292L7 14L0 7L7 0L7.714 0.708L1.92 6.5H14V7.5H1.921Z" fill="#6B6B6B"/>
+            </svg>
+            <span class="text-sm">Back</span>
+          </button>
+          <h1 class="text-xl font-semibold text-gray-900">How's it going?</h1>
+        </div>
+
+        <!-- Project 1 -->
+        <div id="project1-card" class="bg-white rounded-2xl p-6 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Agent Dashboard</h2>
+            <span class="text-sm text-gray-400">1/2</span>
+          </div>
+          <div class="grid grid-cols-4 gap-3 mb-4">
+            <button onclick="selectMood(1, 'Flowing')" class="mood-btn mood-1-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😎</span>
+              <span class="text-xs font-medium text-gray-600">Flowing</span>
+            </button>
+            <button onclick="selectMood(1, 'Steady')" class="mood-btn mood-1-steady flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😊</span>
+              <span class="text-xs font-medium text-gray-600">Steady</span>
+            </button>
+            <button onclick="selectMood(1, 'Struggling')" class="mood-btn mood-1-struggling flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😰</span>
+              <span class="text-xs font-medium text-gray-600">Struggling</span>
+            </button>
+            <button onclick="selectMood(1, 'Blocked')" class="mood-btn mood-1-blocked flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😫</span>
+              <span class="text-xs font-medium text-gray-600">Blocked</span>
+            </button>
+          </div>
+          <div id="project1-fields" class="additional-fields">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-900 mb-2">What's the issue?</label>
+              <textarea id="project1-issue" placeholder="Describe the issue" rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 resize-none text-sm"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Who can help? (optional)</label>
+              <div class="relative">
+                <select id="project1-helper" class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 appearance-none text-sm text-gray-600 bg-white cursor-pointer">
+                  <option value="">Select an option</option>
+                  <option>Self (Advait)</option>
+                  <option>Aarav Sharma</option>
+                  <option>Ananya Iyer</option>
+                  <option>Ishaan Mehta</option>
+                  <option>Riyas Ahmed</option>
+                  <option>Vihaan Patel</option>
+                  <option>Outside Team</option>
+                </select>
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div id="project2" class="bg-white rounded-2xl p-6 mb-4 border-2 border-dashed border-gray-300">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-400">Design Systems</h2>
+            <span class="text-sm text-gray-300">2/2</span>
+          </div>
+          <p id="project2-locked-msg" class="text-gray-400 text-center py-8">Complete previous project first</p>
+          <div id="project2-moods" class="grid grid-cols-4 gap-3 mb-4 hidden">
+            <button onclick="selectMood(2, 'Flowing')" class="mood-btn mood-2-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😎</span>
+              <span class="text-xs font-medium text-gray-600">Flowing</span>
+            </button>
+            <button onclick="selectMood(2, 'Steady')" class="mood-btn mood-2-steady flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😊</span>
+              <span class="text-xs font-medium text-gray-600">Steady</span>
+            </button>
+            <button onclick="selectMood(2, 'Struggling')" class="mood-btn mood-2-struggling flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😰</span>
+              <span class="text-xs font-medium text-gray-600">Struggling</span>
+            </button>
+            <button onclick="selectMood(2, 'Blocked')" class="mood-btn mood-2-blocked flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">😫</span>
+              <span class="text-xs font-medium text-gray-600">Blocked</span>
+            </button>
+          </div>
+          <div id="project2-fields" class="additional-fields">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-900 mb-2">What's the issue?</label>
+              <textarea id="project2-issue" placeholder="Describe the issue" rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 resize-none text-sm"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Who can help? (optional)</label>
+              <div class="relative">
+                <select id="project2-helper" class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 appearance-none text-sm text-gray-600 bg-white cursor-pointer">
+                  <option value="">Select an option</option>
+                  <option>Self (Advait)</option>
+                  <option>Aarav Sharma</option>
+                  <option>Ananya Iyer</option>
+                  <option>Ishaan Mehta</option>
+                  <option>Riyas Ahmed</option>
+                  <option>Vihaan Patel</option>
+                  <option>Outside Team</option>
+                </select>
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorMessage" class="hidden fixed bottom-28 left-0 right-0">
+        <div class="max-w-md mx-auto px-4">
+          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm text-center">
+            Please complete all required fields to continue
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="fixed bottom-0 left-0 right-0 bg-gray-50 py-6">
+        <div class="max-w-md mx-auto px-4">
+          <button id="submitBtn" onclick="handleSubmit()" class="submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500">
+            Submit Check-in
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Success Page -->
+  <div id="screen3" class="screen">
+    <div class="min-h-screen bg-gray-50">
+      <!-- Confetti Container -->
+      <div id="confetti-container" class="fixed inset-0 pointer-events-none overflow-hidden z-50"></div>
+      
+      <div class="max-w-md mx-auto px-4 py-6 pb-32">
+        <div class="flex items-center justify-between mb-8 text-sm">
+          <span id="clock-screen3" class="font-semibold">9:41</span>
+        </div>
+
+        <div class="flex flex-col items-center mt-12">
+          <!-- Success Badge -->
+          <div class="relative flex items-center justify-center mb-8">
+            <svg width="180" height="180" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
+              <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
+            </svg>
+            <svg width="80" height="80" viewBox="0 0 80 80" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <path d="M20 40 L35 55 L60 25" stroke="#059669" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            </svg>
+          </div>
+          
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">You're all set!</h1>
+          <p class="text-gray-600 text-center mb-12">Your Check-in has been submitted</p>
+        </div>
+
+        <!-- Project Summaries (dynamically generated) -->
+        <div id="project-summaries"></div>
+
+        <!-- Edit Button -->
+        <div class="mb-4 text-center">
+          <button onclick="editCheckIn()" class="text-base font-medium text-gray-700 underline hover:text-gray-900 transition-colors bg-transparent border-0">
+            Edit
+          </button>
+        </div>
+
+        <!-- Done Button -->
+        <div class="fixed bottom-0 left-0 right-0 bg-gray-50 py-6">
+          <div class="max-w-md mx-auto px-4">
+            <button onclick="doneCheckIn()" class="w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500 transition-all">
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Real-time clock update
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const timeString = `${hours}:${minutes.toString().padStart(2, '0')}`;
+      
+      // Update all clock elements
+      const clockElements = ['clock', 'clock-screen2', 'clock-screen3'];
+      clockElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = timeString;
+      });
+    }
+    
+    // Update clock immediately and then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    // Set current date dynamically
+    function setCurrentDate() {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      const now = new Date();
+      const dayName = days[now.getDay()];
+      const monthName = months[now.getMonth()];
+      const date = now.getDate();
+      
+      const dateString = `${dayName}, ${monthName} ${date} (Today)`;
+      document.getElementById('current-date').textContent = dateString;
+    }
+    
+    // Set date on page load
+    setCurrentDate();
+    
+    // Global state
+    let selectedProject1Mood = null;
+    let selectedProject2Mood = null;
+    let project1Issue = '';
+    let project2Issue = '';
+    let project1Helper = '';
+    let project2Helper = '';
+    let isCheckedIn = false;
+
+    const moodStyles = {
+      Flowing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '😎' },
+      Steady: { bg: '#FFFBEB', border: '#EAB308', shadow: '0 4px 12px rgba(234, 179, 8, 0.15)', emoji: '😊' },
+      Struggling: { bg: '#FFF5F0', border: '#F97316', shadow: '0 4px 12px rgba(249, 115, 22, 0.15)', emoji: '😰' },
+      Blocked: { bg: '#FEF2F2', border: '#EF4444', shadow: '0 4px 12px rgba(239, 68, 68, 0.15)', emoji: '😫' }
+    };
+
+    const moodTextColors = {
+      Flowing: 'text-green-700',
+      Steady: 'text-yellow-700',
+      Struggling: 'text-orange-700',
+      Blocked: 'text-red-700'
+    };
+
+    // Navigation
+    function goToScreen1() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen1').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function goToScreen2() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen2').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function goToScreen3() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen3').classList.add('active');
+      window.scrollTo(0, 0);
+      showConfetti();
+      renderProjectSummaries();
+    }
+
+    // Mood selection
+    function selectMood(project, mood) {
+      if (project === 2 && !selectedProject1Mood) return;
+
+      const prefix = project === 1 ? 'mood-1-' : 'mood-2-';
+      
+      // Reset all buttons for this project
+      ['Flowing', 'Steady', 'Struggling', 'Blocked'].forEach(m => {
+        const btn = document.querySelector('.' + prefix + m.toLowerCase());
+        btn.style.backgroundColor = '#F9FAFB';
+        btn.style.borderColor = '#E5E7EB';
+        btn.style.borderWidth = '2px';
+        btn.style.boxShadow = 'none';
+        btn.style.transform = 'scale(1)';
+        btn.querySelector('span:last-child').className = 'text-xs font-medium text-gray-600';
+      });
+
+      // Apply selected style
+      const selectedBtn = document.querySelector('.' + prefix + mood.toLowerCase());
+      selectedBtn.style.backgroundColor = moodStyles[mood].bg;
+      selectedBtn.style.borderColor = moodStyles[mood].border;
+      selectedBtn.style.borderWidth = '1.5px';
+      selectedBtn.style.boxShadow = moodStyles[mood].shadow;
+      selectedBtn.style.transform = 'scale(1.05)';
+      selectedBtn.querySelector('span:last-child').className = 'text-xs font-medium ' + moodTextColors[mood];
+
+      if (project === 1) {
+        selectedProject1Mood = mood;
+        const fieldsDiv = document.getElementById('project1-fields');
+        if (mood === 'Struggling' || mood === 'Blocked') {
+          fieldsDiv.classList.add('show');
+        } else {
+          fieldsDiv.classList.remove('show');
+          document.getElementById('project1-issue').value = '';
+          document.getElementById('project1-helper').value = '';
+        }
+        unlockProject2();
+      } else {
+        selectedProject2Mood = mood;
+        const fieldsDiv = document.getElementById('project2-fields');
+        if (mood === 'Struggling' || mood === 'Blocked') {
+          fieldsDiv.classList.add('show');
+        } else {
+          fieldsDiv.classList.remove('show');
+          document.getElementById('project2-issue').value = '';
+          document.getElementById('project2-helper').value = '';
+        }
+      }
+    }
+
+    function unlockProject2() {
+      document.getElementById('project2').className = 'bg-white rounded-2xl p-6 mb-4';
+      document.getElementById('project2').querySelector('h2').className = 'text-lg font-semibold text-gray-900';
+      document.getElementById('project2').querySelector('span').className = 'text-sm text-gray-400';
+      document.getElementById('project2-locked-msg').classList.add('hidden');
+      document.getElementById('project2-moods').classList.remove('hidden');
+    }
+
+    // Submit
+    function handleSubmit() {
+      project1Issue = document.getElementById('project1-issue').value;
+      project2Issue = document.getElementById('project2-issue').value;
+      project1Helper = document.getElementById('project1-helper').value;
+      project2Helper = document.getElementById('project2-helper').value;
+      
+      // Clear previous error states
+      document.querySelectorAll('.error-shake, .error-field').forEach(el => {
+        el.classList.remove('error-shake', 'error-field');
+      });
+      
+      let isValid = true;
+      let firstErrorElement = null;
+      
+      // Validate Project 1
+      if (!selectedProject1Mood) {
+        const project1Card = document.querySelector('#project1-card');
+        if (project1Card) {
+          project1Card.classList.add('error-shake');
+          if (!firstErrorElement) firstErrorElement = project1Card;
+          // Clear shake after animation
+          setTimeout(() => project1Card.classList.remove('error-shake'), 500);
+        }
+        isValid = false;
+      } else if ((selectedProject1Mood === 'Struggling' || selectedProject1Mood === 'Blocked') && !project1Issue.trim()) {
+        const issueField = document.getElementById('project1-issue');
+        issueField.classList.add('error-field');
+        if (!firstErrorElement) firstErrorElement = issueField;
+        // Clear error after 3 seconds
+        setTimeout(() => issueField.classList.remove('error-field'), 3000);
+        isValid = false;
+      }
+      
+      // Validate Project 2
+      if (!selectedProject2Mood) {
+        const project2Card = document.getElementById('project2');
+        if (project2Card && !project2Card.classList.contains('border-dashed')) {
+          project2Card.classList.add('error-shake');
+          if (!firstErrorElement) firstErrorElement = project2Card;
+          // Clear shake after animation
+          setTimeout(() => project2Card.classList.remove('error-shake'), 500);
+        }
+        isValid = false;
+      } else if ((selectedProject2Mood === 'Struggling' || selectedProject2Mood === 'Blocked') && !project2Issue.trim()) {
+        const issueField = document.getElementById('project2-issue');
+        issueField.classList.add('error-field');
+        if (!firstErrorElement) firstErrorElement = issueField;
+        // Clear error after 3 seconds
+        setTimeout(() => issueField.classList.remove('error-field'), 3000);
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        document.getElementById('errorMessage').classList.remove('hidden');
+        setTimeout(() => document.getElementById('errorMessage').classList.add('hidden'), 3000);
+        
+        // Scroll to first error
+        if (firstErrorElement) {
+          firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      
+      goToScreen3();
+    }
+    
+    // Add input event listeners to clear errors on user interaction
+    document.addEventListener('DOMContentLoaded', function() {
+      const project1IssueField = document.getElementById('project1-issue');
+      const project2IssueField = document.getElementById('project2-issue');
+      
+      if (project1IssueField) {
+        project1IssueField.addEventListener('focus', function() {
+          this.classList.remove('error-field');
+        });
+      }
+      
+      if (project2IssueField) {
+        project2IssueField.addEventListener('focus', function() {
+          this.classList.remove('error-field');
+        });
+      }
+    });
+
+    // Success screen functions
+    function showConfetti() {
+      const container = document.getElementById('confetti-container');
+      container.innerHTML = '';
+      
+      const colors = ['#FCA5A5', '#FBBF24', '#60A5FA', '#A78BFA', '#34D399'];
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'absolute w-2 h-2';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animation = `confetti-fall 3s linear ${Math.random() * 3}s forwards`;
+        container.appendChild(confetti);
+      }
+      
+      setTimeout(() => { container.innerHTML = ''; }, 6000);
+    }
+
+    function renderProjectSummaries() {
+      const container = document.getElementById('project-summaries');
+      
+      const html = `
+        <div class="bg-gray-100 rounded-2xl p-6 mb-4">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="text-base font-semibold text-gray-900">Agent Dashboard (1/2)</h3>
+            <span class="text-3xl">${moodStyles[selectedProject1Mood].emoji}</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Status: <span class="font-medium text-gray-900">${selectedProject1Mood}</span>
+          </p>
+          ${project1Issue ? `
+            <div class="border-t border-gray-300 pt-4 mb-3">
+              <p class="text-sm text-gray-700 italic">"${project1Issue}"</p>
+            </div>
+            ${project1Helper ? `<p class="text-sm text-gray-600">@ ${project1Helper}</p>` : ''}
+          ` : ''}
+        </div>
+
+        <div class="bg-gray-100 rounded-2xl p-6 mb-8">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="text-base font-semibold text-gray-900">Design Systems (2/2)</h3>
+            <span class="text-3xl">${moodStyles[selectedProject2Mood].emoji}</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Status: <span class="font-medium text-gray-900">${selectedProject2Mood}</span>
+          </p>
+          ${project2Issue ? `
+            <div class="border-t border-gray-300 pt-4 mb-3">
+              <p class="text-sm text-gray-700 italic">"${project2Issue}"</p>
+            </div>
+            ${project2Helper ? `<p class="text-sm text-gray-600">@ ${project2Helper}</p>` : ''}
+          ` : ''}
+        </div>
+      `;
+      
+      container.innerHTML = html;
+    }
+
+    function editCheckIn() {
+      goToScreen2();
+    }
+
+    function doneCheckIn() {
+      // Set checked in status
+      isCheckedIn = true;
+      
+      // Update home page
+      updateHomePage();
+      
+      // Go to home
+      goToScreen1();
+    }
+    
+    function updateHomePage() {
+      // Update success badge vs pending
+      const pendingUpdate = document.getElementById('pending-update');
+      const successBadge = document.getElementById('success-badge');
+      
+      if (isCheckedIn) {
+        pendingUpdate.classList.add('hidden');
+        successBadge.classList.remove('hidden');
+        successBadge.classList.add('flex');
+      } else {
+        pendingUpdate.classList.remove('hidden');
+        successBadge.classList.add('hidden');
+        successBadge.classList.remove('flex');
+      }
+      
+      // Update button text and style
+      const btn = document.getElementById('check-in-btn');
+      if (isCheckedIn) {
+        btn.textContent = 'Edit';
+        btn.className = 'w-full bg-transparent hover:bg-gray-50 text-rose-400 text-lg font-medium py-4 rounded-2xl mb-8 border-2 border-rose-400 transition-all';
+      } else {
+        btn.textContent = 'Check-in Now';
+        btn.className = 'w-full bg-rose-400 hover:bg-rose-500 text-white text-lg font-medium py-4 rounded-2xl mb-8 shadow-sm check-in-btn transition-all';
+      }
+      
+      // Count blockers - both projects can be blockers
+      let blockerCount = 0;
+      if (isCheckedIn) {
+        if (selectedProject1Mood === 'Blocked') blockerCount++;
+        if (selectedProject2Mood === 'Blocked') blockerCount++;
+      }
+      
+      // Update team count
+      const checkedInCount = isCheckedIn ? 5 : 4;
+      document.getElementById('team-status').textContent = `${checkedInCount} of 6 checked in • ${blockerCount} blocker${blockerCount !== 1 ? 's' : ''}`;
+      
+      // Update Advait's card
+      const advaitCard = document.getElementById('advait-card');
+      const blockerIcon = document.getElementById('advait-blocker-icon');
+      
+      if (isCheckedIn) {
+        advaitCard.className = 'w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300';
+        
+        // Show blocker icon if any blocker
+        if (blockerCount > 0) {
+          blockerIcon.classList.remove('hidden');
+          blockerIcon.classList.add('flex');
+        } else {
+          blockerIcon.classList.add('hidden');
+          blockerIcon.classList.remove('flex');
+        }
+      } else {
+        advaitCard.className = 'w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200';
+        blockerIcon.classList.add('hidden');
+        blockerIcon.classList.remove('flex');
+      }
+    }
+  </script>
+</body>
+</html>
