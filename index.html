@@ -41,6 +41,58 @@
     .team-member { transition: transform 0.2s ease; }
     .team-member:hover { transform: translateY(-4px); }
     
+    .team-member.checked-in {
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    
+    .team-member.checked-in:hover {
+      transform: translateY(-2px);
+    }
+    
+    .team-member.checked-in:active {
+      transform: translateY(3px) scale(0.97);
+    }
+    
+    /* Avatar tile press effect */
+    .team-member.checked-in .w-20 {
+      transition: all 0.1s ease;
+    }
+    
+    .team-member.checked-in:hover .w-20 {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .team-member.checked-in:active .w-20 {
+      transform: translateY(2px) scale(0.95);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes vibe-float {
+      0% { 
+        transform: translateY(0) translateX(0) scale(0.5) rotate(0deg); 
+        opacity: 0;
+      }
+      10% { 
+        transform: translateY(-25px) translateX(calc(var(--drift-x) * 0.1)) scale(1) rotate(5deg); 
+        opacity: 1;
+      }
+      100% { 
+        transform: translateY(-200px) translateX(var(--drift-x)) scale(0.8) rotate(var(--rotate)); 
+        opacity: 0; 
+      }
+    }
+    
+    .vibe-emoji-burst {
+      position: fixed;
+      font-size: 20px;
+      pointer-events: none;
+      z-index: 100;
+      animation: vibe-float 3s ease-out forwards;
+      will-change: transform, opacity;
+    }
+    
     .check-in-btn { transition: all 0.2s ease; }
     .check-in-btn:hover { transform: scale(1.02); box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.3); }
     .check-in-btn:active { transform: scale(0.98); }
@@ -89,6 +141,34 @@
       animation: badge-zoom-in 1.3s ease-out forwards;
     }
     
+    @keyframes coin-flip {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(90deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    
+    .coin-flip-animation {
+      animation: coin-flip 0.6s ease-in-out;
+    }
+    
+    .badge-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .badge-front {
+      transform: rotateY(0deg);
+    }
+    
+    .badge-back {
+      transform: rotateY(180deg);
+    }
+    
     @keyframes confetti-fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
@@ -98,6 +178,39 @@
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-10px); }
       75% { transform: translateX(10px); }
+    }
+    
+    @keyframes gentle-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    
+    @keyframes emoji-float {
+      0% { 
+        transform: translateY(0) translateX(0) scale(0.5) rotate(0deg); 
+        opacity: 0;
+      }
+      10% { 
+        transform: translateY(-25px) translateX(calc(var(--drift-x) * 0.1)) scale(1) rotate(5deg); 
+        opacity: 1;
+      }
+      100% { 
+        transform: translateY(-250px) translateX(var(--drift-x)) scale(0.8) rotate(var(--rotate)); 
+        opacity: 0; 
+      }
+    }
+    
+    .smoke-emoji {
+      position: absolute;
+      font-size: 16px;
+      pointer-events: none;
+      animation: emoji-float 4s ease-out forwards;
+      will-change: transform, opacity;
+    }
+    
+    .gentle-shake-once {
+      animation: gentle-shake 0.4s ease-in-out;
     }
     
     .error-shake {
@@ -154,13 +267,25 @@
       </div>
 
       <div id="success-badge" class="hidden flex-col items-center justify-center py-12 mb-8">
-        <div class="relative flex items-center justify-center mb-6 badge-container">
-          <svg width="140" height="140" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
-            <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
-          </svg>
-          <svg width="60" height="60" viewBox="0 0 60 60" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <path d="M15 30 L26 41 L45 19" stroke="#059669" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          </svg>
+        <div class="relative flex items-center justify-center mb-6 badge-container" style="perspective: 1000px;">
+          <div id="badge-flip-container" style="position: relative; width: 140px; height: 140px; transform-style: preserve-3d;">
+            <!-- Front face: checkmark -->
+            <div class="badge-face badge-front">
+              <svg width="140" height="140" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
+                <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
+              </svg>
+              <svg width="60" height="60" viewBox="0 0 60 60" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <path d="M15 30 L26 41 L45 19" stroke="#059669" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+            </div>
+            <!-- Back face: profile emoji -->
+            <div class="badge-face badge-back">
+              <svg width="140" height="140" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
+                <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
+              </svg>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateY(180deg); font-size: 60px;">🐄</div>
+            </div>
+          </div>
         </div>
         <h2 class="text-xl font-bold text-gray-900 mb-2 text-center">You're all set!</h2>
         <p class="text-gray-600 text-center">Your Check-in has been submitted</p>
@@ -174,8 +299,12 @@
 
       <div class="fade-in-up" style="animation-delay: 0.4s">
         <h2 class="text-2xl font-semibold text-gray-900 mb-2">Team updates</h2>
-        <div class="flex items-center justify-between mb-6">
-          <p id="team-status" class="text-gray-500 text-sm">4 of 6 checked in • 0 blockers</p>
+        <div class="flex items-center justify-between mb-6 relative">
+          <div class="relative inline-block">
+            <p id="team-status" class="text-gray-500 text-sm">4 of 6 checked in • 0 blockers</p>
+            <!-- Smoke emoji container positioned at the bullet point (•) -->
+            <div id="smoke-container" style="position: absolute; left: 108px; top: 20px;"></div>
+          </div>
           <!-- Toggle button with label -->
           <div class="flex items-center gap-2">
             <span class="text-xs text-gray-500">See Details</span>
@@ -187,23 +316,23 @@
         
         <!-- Grid view (default) -->
         <div id="grid-view" class="grid grid-cols-3 gap-x-4 gap-y-6">
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.5s">
+          <div class="flex flex-col items-center team-member checked-in scale-in" style="animation-delay: 0.5s; position: relative;" onclick="showVibeEmojis('aarav', this)">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🦉</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Aarav Sharma</p>
           </div>
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.6s">
+          <div class="flex flex-col items-center team-member checked-in scale-in" style="animation-delay: 0.6s; position: relative;" onclick="showVibeEmojis('ananya', this)">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🦊</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Ananya Iyer</p>
           </div>
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.7s">
+          <div class="flex flex-col items-center team-member checked-in scale-in" style="animation-delay: 0.7s; position: relative;" onclick="showVibeEmojis('ishaan', this)">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🐥</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Ishaan Mehta</p>
           </div>
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.8s">
+          <div class="flex flex-col items-center team-member checked-in scale-in" style="animation-delay: 0.8s; position: relative;" onclick="showVibeEmojis('riyas', this)">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🐑</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Riyas Ahmed</p>
           </div>
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.9s">
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.9s; position: relative;" onclick="if(isCheckedIn) showVibeEmojis('advait', this)">
             <div class="relative">
               <div id="advait-card" class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200">🐄</div>
               <div id="advait-blocker-icon" class="hidden absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
@@ -212,7 +341,7 @@
             </div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Advait Kulkarni</p>
           </div>
-          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 1s">
+          <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 1s; position: relative;">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200">🐵</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Vihaan Patel</p>
           </div>
@@ -303,11 +432,12 @@
                     <p class="text-sm text-gray-900 font-medium">Advait Kulkarni</p>
                     <div class="flex items-center gap-2">
                       <p id="advait-time" class="text-xs text-gray-400"></p>
-                      <!-- Message button next to timestamp -->
-                      <button id="advait-message-btn" class="hidden" onclick="handleMessageClick()">
+                      <!-- Message button with issue count - entire area clickable -->
+                      <button id="advait-message-btn" class="hidden items-center gap-0.5 hover:opacity-80 transition-opacity" onclick="handleMessageClick()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                         </svg>
+                        <span id="advait-issue-count" class="text-xs font-medium" style="color: #FB7185;"></span>
                       </button>
                     </div>
                   </div>
@@ -352,10 +482,17 @@
         </svg>
       </button>
       
-      <!-- Modal content -->
-      <h2 class="text-xl font-bold text-gray-900 mb-4">Issue Details</h2>
+      <!-- User header with avatar and name -->
+      <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
+        <div class="w-9 h-9 bg-cyan-100 rounded-full flex items-center justify-center text-xl" style="border: 0.5px solid #EEC070;">🐄</div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Advait Kulkarni</h2>
+          <p id="modal-timestamp" class="text-xs text-gray-400"></p>
+        </div>
+      </div>
       
-      <div id="modal-content" class="space-y-4">
+      <!-- Modal content - project cards -->
+      <div id="modal-content" class="space-y-4 pb-16">
         <!-- Content will be dynamically inserted here -->
       </div>
     </div>
@@ -579,6 +716,7 @@
     let autoTransitionTimeout = null;
     let advaitSubmissionTime = null;
     let timeUpdateInterval = null;
+    let coinFlipInterval = null;
 
     const moodStyles = {
       Vibing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '🔥' },
@@ -680,6 +818,7 @@
       document.getElementById('advait-blocked').className = 'text-xs text-gray-300 w-4 text-center';
       
       const messageBtn = document.getElementById('advait-message-btn');
+      const issueCountSpan = document.getElementById('advait-issue-count');
       
       // Count projects by mood
       const moodCounts = { Vibing: 0, Flowing: 0, Struggling: 0, Blocked: 0 };
@@ -705,12 +844,23 @@
         document.getElementById('advait-blocked').className = 'text-xs text-gray-600 w-4 text-center';
       }
       
-      // Show message button only if struggling/blocked AND issue text exists
-      const hasIssueText = (project1Issue && project1Issue.trim()) || (project2Issue && project2Issue.trim());
-      if ((moodCounts.Struggling > 0 || moodCounts.Blocked > 0) && hasIssueText) {
+      // Calculate total issues (struggling + blocked with issue text)
+      let issueCount = 0;
+      if ((selectedProject1Mood === 'Struggling' || selectedProject1Mood === 'Blocked') && project1Issue && project1Issue.trim()) {
+        issueCount++;
+      }
+      if ((selectedProject2Mood === 'Struggling' || selectedProject2Mood === 'Blocked') && project2Issue && project2Issue.trim()) {
+        issueCount++;
+      }
+      
+      // Show message button and count only if struggling/blocked AND issue text exists
+      if (issueCount > 0) {
         messageBtn.classList.remove('hidden');
+        messageBtn.classList.add('flex');
+        issueCountSpan.textContent = issueCount;
       } else {
         messageBtn.classList.add('hidden');
+        messageBtn.classList.remove('flex');
       }
     }
     
@@ -719,45 +869,79 @@
       const modalContent = document.getElementById('modal-content');
       let html = '';
       
-      // Check project 1 for struggling/blocked with issue text
-      if ((selectedProject1Mood === 'Struggling' || selectedProject1Mood === 'Blocked') && project1Issue && project1Issue.trim()) {
+      // Update modal timestamp
+      updateModalTimestamp();
+      
+      // Check if project 1 should shake
+      const project1ShouldShake = selectedProject1Mood === 'Struggling' || selectedProject1Mood === 'Blocked';
+      
+      // Show Project 1 card (always if checked in)
+      if (selectedProject1Mood) {
         html += `
-          <div class="border-b border-gray-200 pb-4">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-2xl">${moodStyles[selectedProject1Mood].emoji}</span>
-              <h3 class="text-base font-semibold text-gray-900">Agent Dashboard</h3>
+          <div class="bg-gray-100 rounded-2xl p-6 ${project1ShouldShake ? 'gentle-shake-once' : ''}" id="modal-project-1">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-base font-semibold text-gray-900">Agent Dashboard (1/2)</h3>
+              <span class="text-3xl">${moodStyles[selectedProject1Mood].emoji}</span>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Status: <span class="font-medium ${moodTextColors[selectedProject1Mood]}">${selectedProject1Mood}</span></p>
-            <p class="text-sm text-gray-700 italic mb-3">"${project1Issue}"</p>
-            ${project1Helper ? `<p class="text-sm text-gray-600">@ ${project1Helper}</p>` : ''}
+            <p class="text-sm text-gray-600 mb-4">
+              Status: <span class="font-medium text-gray-900">${selectedProject1Mood}</span>${project1Helper ? ` • @ ${project1Helper}` : ''}
+            </p>
+            ${project1Issue ? `
+              <div class="border-t border-gray-300 pt-4">
+                <p class="text-sm text-gray-700 italic">"${project1Issue}"</p>
+              </div>
+            ` : ''}
           </div>
         `;
       }
       
-      // Check project 2 for struggling/blocked with issue text
-      if ((selectedProject2Mood === 'Struggling' || selectedProject2Mood === 'Blocked') && project2Issue && project2Issue.trim()) {
+      // Check if project 2 should shake
+      const project2ShouldShake = selectedProject2Mood === 'Struggling' || selectedProject2Mood === 'Blocked';
+      
+      // Show Project 2 card (always if checked in)
+      if (selectedProject2Mood) {
         html += `
-          <div class="${html ? 'pt-4' : ''}">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-2xl">${moodStyles[selectedProject2Mood].emoji}</span>
-              <h3 class="text-base font-semibold text-gray-900">Design Systems</h3>
+          <div class="bg-gray-100 rounded-2xl p-6 ${project2ShouldShake ? 'gentle-shake-once' : ''}" id="modal-project-2">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-base font-semibold text-gray-900">Design Systems (2/2)</h3>
+              <span class="text-3xl">${moodStyles[selectedProject2Mood].emoji}</span>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Status: <span class="font-medium ${moodTextColors[selectedProject2Mood]}">${selectedProject2Mood}</span></p>
-            <p class="text-sm text-gray-700 italic mb-3">"${project2Issue}"</p>
-            ${project2Helper ? `<p class="text-sm text-gray-600">@ ${project2Helper}</p>` : ''}
+            <p class="text-sm text-gray-600 mb-4">
+              Status: <span class="font-medium text-gray-900">${selectedProject2Mood}</span>${project2Helper ? ` • @ ${project2Helper}` : ''}
+            </p>
+            ${project2Issue ? `
+              <div class="border-t border-gray-300 pt-4">
+                <p class="text-sm text-gray-700 italic">"${project2Issue}"</p>
+              </div>
+            ` : ''}
           </div>
         `;
       }
       
-      modalContent.innerHTML = html || '<p class="text-sm text-gray-500">No issue details available.</p>';
+      modalContent.innerHTML = html || '<p class="text-sm text-gray-500">No project details available.</p>';
       
-      // Show modal
+      // Show modal and lock scroll
       document.getElementById('issue-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Update modal timestamp
+    function updateModalTimestamp() {
+      if (!advaitSubmissionTime) return;
+      
+      const now = new Date();
+      const minutesAgo = Math.floor((now - advaitSubmissionTime) / 60000);
+      const modalTimestamp = document.getElementById('modal-timestamp');
+      
+      if (modalTimestamp) {
+        modalTimestamp.textContent = getTimeAgoText(minutesAgo);
+      }
     }
     
     // Close issue modal
     function closeIssueModal() {
       document.getElementById('issue-modal').classList.add('hidden');
+      document.body.style.overflow = '';
     }
     
     // Calculate time ago text
@@ -1027,13 +1211,12 @@
             <span class="text-3xl">${moodStyles[selectedProject1Mood].emoji}</span>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Status: <span class="font-medium text-gray-900">${selectedProject1Mood}</span>
+            Status: <span class="font-medium text-gray-900">${selectedProject1Mood}</span>${project1Helper ? ` • @ ${project1Helper}` : ''}
           </p>
           ${project1Issue ? `
-            <div class="border-t border-gray-300 pt-4 mb-3">
+            <div class="border-t border-gray-300 pt-4">
               <p class="text-sm text-gray-700 italic">"${project1Issue}"</p>
             </div>
-            ${project1Helper ? `<p class="text-sm text-gray-600">@ ${project1Helper}</p>` : ''}
           ` : ''}
         </div>
 
@@ -1043,13 +1226,12 @@
             <span class="text-3xl">${moodStyles[selectedProject2Mood].emoji}</span>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Status: <span class="font-medium text-gray-900">${selectedProject2Mood}</span>
+            Status: <span class="font-medium text-gray-900">${selectedProject2Mood}</span>${project2Helper ? ` • @ ${project2Helper}` : ''}
           </p>
           ${project2Issue ? `
-            <div class="border-t border-gray-300 pt-4 mb-3">
+            <div class="border-t border-gray-300 pt-4">
               <p class="text-sm text-gray-700 italic">"${project2Issue}"</p>
             </div>
-            ${project2Helper ? `<p class="text-sm text-gray-600">@ ${project2Helper}</p>` : ''}
           ` : ''}
         </div>
       `;
@@ -1128,9 +1310,11 @@
       // Update Advait's card in grid view
       const advaitCard = document.getElementById('advait-card');
       const blockerIcon = document.getElementById('advait-blocker-icon');
+      const advaitTile = advaitCard.closest('.team-member');
       
       if (isCheckedIn) {
         advaitCard.className = 'w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300';
+        advaitTile.classList.add('checked-in');
         
         // Show blocker icon if any blocker
         if (blockerCount > 0) {
@@ -1142,12 +1326,246 @@
         }
       } else {
         advaitCard.className = 'w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-white border-2 border-gray-200';
+        advaitTile.classList.remove('checked-in');
         blockerIcon.classList.add('hidden');
         blockerIcon.classList.remove('flex');
       }
       
       // Update list view if currently active
       updateListViewStatus();
+      
+      // Start coin flip animation if checked in
+      if (isCheckedIn) {
+        startCoinFlip();
+        updateHomeTimestamp();
+        startHomeTimestampUpdates();
+      } else {
+        stopCoinFlip();
+      }
+    }
+    
+    // Coin flip animation functions
+    function startCoinFlip() {
+      // Clear any existing interval
+      stopCoinFlip();
+      
+      // Start the coin flip cycle: flip every 6 seconds
+      coinFlipInterval = setInterval(() => {
+        const container = document.getElementById('badge-flip-container');
+        if (container) {
+          // Flip to show profile emoji
+          container.style.transform = 'rotateY(180deg)';
+          container.style.transition = 'transform 0.6s ease-in-out';
+          
+          // Flip back after 2 seconds
+          setTimeout(() => {
+            container.style.transform = 'rotateY(0deg)';
+          }, 2000);
+        }
+      }, 6000);
+    }
+    
+    function stopCoinFlip() {
+      if (coinFlipInterval) {
+        clearInterval(coinFlipInterval);
+        coinFlipInterval = null;
+        
+        // Reset to front face
+        const container = document.getElementById('badge-flip-container');
+        if (container) {
+          container.style.transform = 'rotateY(0deg)';
+        }
+      }
+    }
+    
+    // Update home page timestamp to show "x min ago"
+    function updateHomeTimestamp() {
+      if (!advaitSubmissionTime || !isCheckedIn) return;
+      
+      const now = new Date();
+      const minutesAgo = Math.floor((now - advaitSubmissionTime) / 60000);
+      const homeTimestamp = document.getElementById('home-timestamp');
+      
+      if (homeTimestamp) {
+        homeTimestamp.textContent = getTimeAgoText(minutesAgo);
+      }
+    }
+    
+    // Start updating home timestamp every minute
+    function startHomeTimestampUpdates() {
+      updateHomeTimestamp();
+      setInterval(updateHomeTimestamp, 60000); // Update every minute
+    }
+    
+    // Smoke animation for vibe emojis - one-time burst
+    let smokeAnimationPlayed = false;
+    const vibeEmojis = ['🔥', '😊', '😰', '😭'];
+    
+    function playSmokeBurst() {
+      if (smokeAnimationPlayed || isCheckedIn) return;
+      
+      // Only show animation if at least one person has checked in (4 or more)
+      const teamStatusText = document.getElementById('team-status').textContent;
+      const checkedInMatch = teamStatusText.match(/(\d+) of \d+ checked in/);
+      const checkedInCount = checkedInMatch ? parseInt(checkedInMatch[1]) : 0;
+      
+      if (checkedInCount === 0) return; // Don't show animation if no one checked in
+      
+      const container = document.getElementById('smoke-container');
+      if (!container) return;
+      
+      // Create 12 emojis with varied timing - some start later
+      // Timing pattern: quick burst, pause, second wave, pause, final trickle
+      const timingPattern = [
+        0,    // emoji 1 - immediate
+        60,   // emoji 2
+        120,  // emoji 3
+        180,  // emoji 4
+        900,  // emoji 5 - starts when first ones are halfway (after ~1s)
+        1000, // emoji 6
+        1100, // emoji 7
+        1700, // emoji 8 - another late arrival
+        1800, // emoji 9
+        2400, // emoji 10 - final trickle
+        2500, // emoji 11
+        2600  // emoji 12
+      ];
+      
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          createBurstEmoji(i);
+        }, timingPattern[i]);
+      }
+      
+      smokeAnimationPlayed = true;
+    }
+    
+    function createBurstEmoji(index) {
+      const container = document.getElementById('smoke-container');
+      if (!container) return;
+      
+      const emoji = document.createElement('div');
+      emoji.className = 'smoke-emoji';
+      emoji.textContent = vibeEmojis[index % vibeEmojis.length];
+      
+      // Create varied drift patterns for natural spread
+      const driftPatterns = [-35, -20, -10, -5, 5, 10, 20, 35, -25, 15, -15, 25];
+      const drift = driftPatterns[index];
+      emoji.style.setProperty('--drift-x', `${drift}px`);
+      
+      // Add slight rotation for organic movement
+      const rotations = [15, -12, 10, -15, 18, -10, 12, -18, 14, -16, 11, -13];
+      emoji.style.setProperty('--rotate', `${rotations[index]}deg`);
+      
+      // All start from exact same point (0,0 relative to container at bullet point)
+      emoji.style.left = '0px';
+      emoji.style.top = '0px';
+      
+      container.appendChild(emoji);
+      
+      // Remove after animation completes
+      setTimeout(() => {
+        emoji.remove();
+      }, 4000);
+    }
+    
+    // Initialize smoke animation on page load if not checked in
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!isCheckedIn) {
+        // Delay slightly to let page settle
+        setTimeout(() => {
+          playSmokeBurst();
+        }, 1000);
+      }
+      if (isCheckedIn) {
+        startHomeTimestampUpdates();
+      }
+    });
+    
+    // Show vibe emojis when clicking on team member tiles
+    function showVibeEmojis(member, tileElement) {
+      // Hardcoded vibe data for each team member
+      const vibeData = {
+        'aarav': [
+          { emoji: '🔥', type: 'vibing' },
+          { emoji: '😊', type: 'flowing' },
+          { emoji: '😊', type: 'flowing' }
+        ],
+        'ananya': [
+          { emoji: '🔥', type: 'vibing' },
+          { emoji: '😊', type: 'flowing' }
+        ],
+        'ishaan': [
+          { emoji: '🔥', type: 'vibing' },
+          { emoji: '🔥', type: 'vibing' }
+        ],
+        'riyas': [
+          { emoji: '😊', type: 'flowing' },
+          { emoji: '😊', type: 'flowing' }
+        ],
+        'advait': [] // Dynamic - will be calculated
+      };
+      
+      // For Advait, calculate based on actual check-in data
+      if (member === 'advait' && isCheckedIn) {
+        vibeData.advait = [];
+        
+        // Add emojis based on project moods
+        if (selectedProject1Mood === 'Vibing') vibeData.advait.push({ emoji: '🔥', type: 'vibing' });
+        if (selectedProject1Mood === 'Flowing') vibeData.advait.push({ emoji: '😊', type: 'flowing' });
+        if (selectedProject1Mood === 'Struggling') vibeData.advait.push({ emoji: '😰', type: 'struggling' });
+        if (selectedProject1Mood === 'Blocked') vibeData.advait.push({ emoji: '😭', type: 'blocked' });
+        
+        if (selectedProject2Mood === 'Vibing') vibeData.advait.push({ emoji: '🔥', type: 'vibing' });
+        if (selectedProject2Mood === 'Flowing') vibeData.advait.push({ emoji: '😊', type: 'flowing' });
+        if (selectedProject2Mood === 'Struggling') vibeData.advait.push({ emoji: '😰', type: 'struggling' });
+        if (selectedProject2Mood === 'Blocked') vibeData.advait.push({ emoji: '😭', type: 'blocked' });
+      }
+      
+      const vibes = vibeData[member];
+      if (!vibes || vibes.length === 0) return;
+      
+      // Get the avatar div position (center of the tile)
+      const avatarDiv = tileElement.querySelector('.w-20');
+      const rect = avatarDiv.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // Create emojis with varied timing like smoke
+      const timingPattern = [0, 80, 160, 240]; // Staggered starts
+      
+      vibes.forEach((vibe, index) => {
+        setTimeout(() => {
+          createVibeEmoji(vibe.emoji, centerX, centerY, index);
+        }, timingPattern[index] || index * 100);
+      });
+    }
+    
+    function createVibeEmoji(emoji, startX, startY, index) {
+      const emojiEl = document.createElement('div');
+      emojiEl.className = 'vibe-emoji-burst';
+      emojiEl.textContent = emoji;
+      
+      // Position at center of tile
+      emojiEl.style.left = startX + 'px';
+      emojiEl.style.top = startY + 'px';
+      
+      // Random horizontal drift for organic movement (-40px to +40px)
+      const driftPatterns = [-35, -15, 15, 35, -25, 25, -10, 10];
+      const drift = driftPatterns[index] || (Math.random() - 0.5) * 60;
+      emojiEl.style.setProperty('--drift-x', `${drift}px`);
+      
+      // Add slight rotation for organic movement
+      const rotations = [12, -15, 10, -12, 14, -10, 15, -14];
+      const rotate = rotations[index] || (Math.random() - 0.5) * 30;
+      emojiEl.style.setProperty('--rotate', `${rotate}deg`);
+      
+      document.body.appendChild(emojiEl);
+      
+      // Remove after animation completes
+      setTimeout(() => {
+        emojiEl.remove();
+      }, 3000);
     }
   </script>
 </body>
