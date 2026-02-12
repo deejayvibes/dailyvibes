@@ -43,30 +43,21 @@
     
     .team-member.checked-in {
       cursor: pointer;
-      transition: all 0.1s ease;
     }
     
-    .team-member.checked-in:hover {
-      transform: translateY(-2px);
-    }
-    
-    .team-member.checked-in:active {
-      transform: translateY(3px) scale(0.97);
-    }
-    
-    /* Avatar tile press effect */
+    /* Avatar tile press effect - mobile optimized */
     .team-member.checked-in .w-20 {
-      transition: all 0.1s ease;
+      transition: transform 0.15s ease;
     }
     
+    /* No hover state - just cursor change */
     .team-member.checked-in:hover .w-20 {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      /* cursor already set on parent */
     }
     
+    /* Press state - shrink in z-axis */
     .team-member.checked-in:active .w-20 {
-      transform: translateY(2px) scale(0.95);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transform: scale(0.97);
     }
     
     @keyframes vibe-float {
@@ -302,8 +293,8 @@
         <div class="flex items-center justify-between mb-6 relative">
           <div class="relative inline-block">
             <p id="team-status" class="text-gray-500 text-sm">4 of 6 checked in • 0 blockers</p>
-            <!-- Smoke emoji container positioned at the bullet point (•) -->
-            <div id="smoke-container" style="position: absolute; left: 108px; top: 20px;"></div>
+            <!-- Smoke emoji container positioned at the bullet point (•) + 12px -->
+            <div id="smoke-container" style="position: absolute; left: 120px; top: 20px;"></div>
           </div>
           <!-- Toggle button with label -->
           <div class="flex items-center gap-2">
