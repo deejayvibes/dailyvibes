@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Team Check-in App - Complete</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sonsie+One&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes hourglassFlip {
@@ -76,6 +79,16 @@
       100% { transform: rotate(360deg); }
     }
     
+    @keyframes badge-zoom-in {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .badge-container {
+      animation: badge-zoom-in 1.3s ease-out forwards;
+    }
+    
     @keyframes confetti-fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
@@ -101,27 +114,47 @@
   
   <!-- SCREEN 1: Home Page -->
   <div id="screen1" class="screen active">
-    <div class="min-h-screen px-4 py-6 pb-14 max-w-md mx-auto">
-      <div class="flex items-center justify-between mb-8 text-sm fade-in-down">
-        <span id="clock" class="font-semibold">9:41</span>
+    <!-- Top Status Bar -->
+    <div class="h-16 flex items-center justify-between px-4" style="background-color: rgba(238, 192, 112, 0.12);">
+      <div class="max-w-md w-full mx-auto flex items-center justify-between">
+        <!-- Logo on the left -->
+        <!-- Logo on the left -->
+        <div style="font-family: 'Sonsie One', cursive; font-size: 16px; color: #EE7470;">Knock-Knock</div>
+        
+        <!-- Right side: Bell icon and Profile picture -->
+        <div class="flex items-center gap-3">
+          <!-- Notification bell icon with circle background -->
+          <div class="relative w-9 h-9 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+            <div class="absolute inset-0 rounded-full" style="background-color: rgba(238, 192, 112, 0.24);"></div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EE7470" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative z-10">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          
+          <!-- Profile picture -->
+          <div class="w-9 h-9 bg-cyan-100 rounded-full flex items-center justify-center text-xl cursor-pointer hover:scale-105 transition-transform" style="border: 0.5px solid #EEC070; box-sizing: border-box;">🐄</div>
+        </div>
       </div>
+    </div>
+    
+    <div class="min-h-screen px-4 pb-14 max-w-md mx-auto">
 
-      <div class="flex items-start justify-between mb-8 mt-12 fade-in-down" style="animation-delay: 0.1s">
+      <div class="mb-8 mt-8 fade-in-down" style="animation-delay: 0.1s">
         <div>
           <h1 class="text-3xl font-bold text-gray-900 mb-1">Hello, Advait Kulkarni</h1>
           <p id="current-date" class="text-gray-500 text-sm"></p>
         </div>
-        <div class="w-14 h-14 bg-cyan-100 rounded-full flex items-center justify-center text-3xl cursor-pointer hover:scale-105 transition-transform">🐄</div>
       </div>
 
       <!-- Pending Update / Success Badge -->
       <div id="pending-update" class="flex flex-col items-center justify-center py-20 mb-8 fade-in-up" style="animation-delay: 0.2s">
         <div class="text-5xl mb-6 hourglass-animate">⏳</div>
-        <p class="text-gray-600 text-lg fade-in-up" style="animation-delay: 0.4s">Your daily update is pending...</p>
+        <p class="text-gray-600 text-lg fade-in-up" style="animation-delay: 0.4s">How's the vibe today?</p>
       </div>
 
       <div id="success-badge" class="hidden flex-col items-center justify-center py-12 mb-8">
-        <div class="relative flex items-center justify-center mb-6">
+        <div class="relative flex items-center justify-center mb-6 badge-container">
           <svg width="140" height="140" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
             <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
           </svg>
@@ -131,6 +164,7 @@
         </div>
         <h2 class="text-xl font-bold text-gray-900 mb-2 text-center">You're all set!</h2>
         <p class="text-gray-600 text-center">Your Check-in has been submitted</p>
+        <p id="home-timestamp" class="text-gray-400 text-sm text-center">Updated [--:--]</p>
       </div>
 
       <!-- Check-in Button -->
@@ -180,9 +214,7 @@
   <div id="screen2" class="screen">
     <div class="min-h-screen bg-gray-50">
       <div class="max-w-md mx-auto px-4 py-6 pb-32">
-        <div class="flex items-center justify-between mb-6 text-sm">
-          <span id="clock-screen2" class="font-semibold">9:41</span>
-        </div>
+
 
         <div class="flex items-center gap-4 mb-8">
           <button onclick="goToScreen1()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
@@ -191,7 +223,7 @@
             </svg>
             <span class="text-sm">Back</span>
           </button>
-          <h1 class="text-xl font-semibold text-gray-900">How's it going?</h1>
+          <h1 class="text-xl font-semibold text-gray-900">Drop the vibe for today</h1>
         </div>
 
         <!-- Project 1 -->
@@ -201,20 +233,20 @@
             <span class="text-sm text-gray-400">1/2</span>
           </div>
           <div class="grid grid-cols-4 gap-3 mb-4">
-            <button onclick="selectMood(1, 'Flowing')" class="mood-btn mood-1-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
-              <span class="text-3xl mb-2">😎</span>
-              <span class="text-xs font-medium text-gray-600">Flowing</span>
+            <button onclick="selectMood(1, 'Vibing')" class="mood-btn mood-1-vibing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">🔥</span>
+              <span class="text-xs font-medium text-gray-600">Vibing</span>
             </button>
-            <button onclick="selectMood(1, 'Steady')" class="mood-btn mood-1-steady flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+            <button onclick="selectMood(1, 'Flowing')" class="mood-btn mood-1-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
               <span class="text-3xl mb-2">😊</span>
-              <span class="text-xs font-medium text-gray-600">Steady</span>
+              <span class="text-xs font-medium text-gray-600">Flowing</span>
             </button>
             <button onclick="selectMood(1, 'Struggling')" class="mood-btn mood-1-struggling flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
               <span class="text-3xl mb-2">😰</span>
               <span class="text-xs font-medium text-gray-600">Struggling</span>
             </button>
             <button onclick="selectMood(1, 'Blocked')" class="mood-btn mood-1-blocked flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
-              <span class="text-3xl mb-2">😫</span>
+              <span class="text-3xl mb-2">😭</span>
               <span class="text-xs font-medium text-gray-600">Blocked</span>
             </button>
           </div>
@@ -252,20 +284,20 @@
           </div>
           <p id="project2-locked-msg" class="text-gray-400 text-center py-8">Complete previous project first</p>
           <div id="project2-moods" class="grid grid-cols-4 gap-3 mb-4 hidden">
-            <button onclick="selectMood(2, 'Flowing')" class="mood-btn mood-2-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
-              <span class="text-3xl mb-2">😎</span>
-              <span class="text-xs font-medium text-gray-600">Flowing</span>
+            <button onclick="selectMood(2, 'Vibing')" class="mood-btn mood-2-vibing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+              <span class="text-3xl mb-2">🔥</span>
+              <span class="text-xs font-medium text-gray-600">Vibing</span>
             </button>
-            <button onclick="selectMood(2, 'Steady')" class="mood-btn mood-2-steady flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
+            <button onclick="selectMood(2, 'Flowing')" class="mood-btn mood-2-flowing flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
               <span class="text-3xl mb-2">😊</span>
-              <span class="text-xs font-medium text-gray-600">Steady</span>
+              <span class="text-xs font-medium text-gray-600">Flowing</span>
             </button>
             <button onclick="selectMood(2, 'Struggling')" class="mood-btn mood-2-struggling flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
               <span class="text-3xl mb-2">😰</span>
               <span class="text-xs font-medium text-gray-600">Struggling</span>
             </button>
             <button onclick="selectMood(2, 'Blocked')" class="mood-btn mood-2-blocked flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer" style="background-color: #F9FAFB; border: 2px solid #E5E7EB;">
-              <span class="text-3xl mb-2">😫</span>
+              <span class="text-3xl mb-2">😭</span>
               <span class="text-xs font-medium text-gray-600">Blocked</span>
             </button>
           </div>
@@ -323,23 +355,22 @@
       <div id="confetti-container" class="fixed inset-0 pointer-events-none overflow-hidden z-50"></div>
       
       <div class="max-w-md mx-auto px-4 py-6 pb-32">
-        <div class="flex items-center justify-between mb-8 text-sm">
-          <span id="clock-screen3" class="font-semibold">9:41</span>
-        </div>
+
 
         <div class="flex flex-col items-center mt-12">
           <!-- Success Badge -->
-          <div class="relative flex items-center justify-center mb-8">
-            <svg width="180" height="180" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
+          <div class="relative flex items-center justify-center mb-8 badge-container">
+            <svg width="126" height="126" viewBox="0 0 195 195" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: rotate-clockwise 8s linear infinite">
               <path d="M86.7995 4.21918C92.4881 -1.40629 101.644 -1.40629 107.333 4.21918C111.49 8.33001 117.698 9.56492 123.112 7.35782C130.52 4.33751 138.98 7.84148 142.083 15.2157C144.35 20.6044 149.613 24.1211 155.459 24.1538C163.46 24.1985 169.934 30.6729 169.979 38.6732C170.012 44.5195 173.528 49.7826 178.917 52.05C186.291 55.1529 189.795 63.6122 186.775 71.0206C184.568 76.4343 185.803 82.6426 189.914 86.7996C195.539 92.4883 195.539 101.645 189.914 107.333C185.803 111.49 184.568 117.699 186.775 123.112C189.795 130.521 186.291 138.98 178.917 142.083C173.528 144.35 170.012 149.613 169.979 155.46C169.934 163.46 163.46 169.934 155.459 169.979C149.613 170.012 144.35 173.528 142.083 178.917C138.98 186.291 130.52 189.795 123.112 186.775C117.698 184.568 111.49 185.803 107.333 189.914C101.644 195.539 92.4881 195.539 86.7995 189.914C82.6425 185.803 76.4342 184.568 71.0205 186.775C63.6121 189.795 55.1528 186.291 52.0499 178.917C49.7825 173.528 44.5193 170.012 38.6731 169.979C30.6728 169.934 24.1983 163.46 24.1537 155.46C24.121 149.613 20.6043 144.35 15.2156 142.083C7.84136 138.98 4.33739 130.521 7.3577 123.112C9.56479 117.699 8.32989 111.49 4.21906 107.333C-1.40641 101.645 -1.40641 92.4883 4.21906 86.7996C8.32989 82.6426 9.56479 76.4343 7.3577 71.0206C4.33739 63.6122 7.84136 55.1529 15.2156 52.05C20.6043 49.7826 24.121 44.5195 24.1537 38.6732C24.1983 30.6729 30.6728 24.1985 38.6731 24.1538C44.5193 24.1211 49.7825 20.6044 52.0499 15.2157C55.1528 7.84148 63.6121 4.33751 71.0205 7.35782C76.4342 9.56492 82.6425 8.33001 86.7995 4.21918Z" fill="#BBF7D0"/>
             </svg>
-            <svg width="80" height="80" viewBox="0 0 80 80" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <svg width="56" height="56" viewBox="0 0 80 80" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <path d="M20 40 L35 55 L60 25" stroke="#059669" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
             </svg>
           </div>
           
           <h1 class="text-2xl font-bold text-gray-900 mb-2">You're all set!</h1>
-          <p class="text-gray-600 text-center mb-12">Your Check-in has been submitted</p>
+          <p class="text-gray-600 text-center">Your Check-in has been submitted</p>
+          <p id="timestamp" class="text-gray-400 text-sm text-center mb-12">Updated [--:--]</p>
         </div>
 
         <!-- Project Summaries (dynamically generated) -->
@@ -355,8 +386,11 @@
         <!-- Done Button -->
         <div class="fixed bottom-0 left-0 right-0 bg-gray-50 py-6">
           <div class="max-w-md mx-auto px-4">
-            <button onclick="doneCheckIn()" class="w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500 transition-all">
-              Done
+            <button id="done-btn" onclick="doneCheckIn()" class="relative overflow-hidden w-full py-4 rounded-2xl text-lg font-medium text-white transition-all bg-rose-400 hover:bg-rose-500">
+              <!-- Progress bar - thin 2px line at top -->
+              <div id="progress-bar" class="absolute top-0 left-0 bg-rose-700 rounded-tl-2xl" style="width: 0%; height: 2px; transition: none;"></div>
+              <!-- Button text -->
+              <span class="relative z-10">Done</span>
             </button>
           </div>
         </div>
@@ -365,25 +399,6 @@
   </div>
 
   <script>
-    // Real-time clock update
-    function updateClock() {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const timeString = `${hours}:${minutes.toString().padStart(2, '0')}`;
-      
-      // Update all clock elements
-      const clockElements = ['clock', 'clock-screen2', 'clock-screen3'];
-      clockElements.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) element.textContent = timeString;
-      });
-    }
-    
-    // Update clock immediately and then every second
-    updateClock();
-    setInterval(updateClock, 1000);
-    
     // Set current date dynamically
     function setCurrentDate() {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -409,17 +424,18 @@
     let project1Helper = '';
     let project2Helper = '';
     let isCheckedIn = false;
+    let autoTransitionTimeout = null;
 
     const moodStyles = {
-      Flowing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '😎' },
-      Steady: { bg: '#FFFBEB', border: '#EAB308', shadow: '0 4px 12px rgba(234, 179, 8, 0.15)', emoji: '😊' },
+      Vibing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '🔥' },
+      Flowing: { bg: '#FFFBEB', border: '#EAB308', shadow: '0 4px 12px rgba(234, 179, 8, 0.15)', emoji: '😊' },
       Struggling: { bg: '#FFF5F0', border: '#F97316', shadow: '0 4px 12px rgba(249, 115, 22, 0.15)', emoji: '😰' },
-      Blocked: { bg: '#FEF2F2', border: '#EF4444', shadow: '0 4px 12px rgba(239, 68, 68, 0.15)', emoji: '😫' }
+      Blocked: { bg: '#FEF2F2', border: '#EF4444', shadow: '0 4px 12px rgba(239, 68, 68, 0.15)', emoji: '😭' }
     };
 
     const moodTextColors = {
-      Flowing: 'text-green-700',
-      Steady: 'text-yellow-700',
+      Vibing: 'text-green-700',
+      Flowing: 'text-yellow-700',
       Struggling: 'text-orange-700',
       Blocked: 'text-red-700'
     };
@@ -443,6 +459,27 @@
       window.scrollTo(0, 0);
       showConfetti();
       renderProjectSummaries();
+      
+      // Start progress bar animation
+      const progressBar = document.getElementById('progress-bar');
+      
+      // Reset progress bar
+      progressBar.style.transition = 'none';
+      progressBar.style.width = '5%';
+      
+      // Force reflow to ensure the reset takes effect
+      progressBar.offsetHeight;
+      
+      // Start animation from 5% to 100% over 5 seconds
+      setTimeout(() => {
+        progressBar.style.transition = 'width 5s linear';
+        progressBar.style.width = '100%';
+      }, 50);
+      
+      // Auto-transition to home page after 5 seconds
+      autoTransitionTimeout = setTimeout(() => {
+        doneCheckIn();
+      }, 5000);
     }
 
     // Mood selection
@@ -452,7 +489,7 @@
       const prefix = project === 1 ? 'mood-1-' : 'mood-2-';
       
       // Reset all buttons for this project
-      ['Flowing', 'Steady', 'Struggling', 'Blocked'].forEach(m => {
+      ['Vibing', 'Flowing', 'Struggling', 'Blocked'].forEach(m => {
         const btn = document.querySelector('.' + prefix + m.toLowerCase());
         btn.style.backgroundColor = '#F9FAFB';
         btn.style.borderColor = '#E5E7EB';
@@ -567,6 +604,14 @@
         return;
       }
       
+      // Capture and display timestamp
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const timeString = `Updated [${hours}:${minutes}]`;
+      document.getElementById('timestamp').textContent = timeString;
+      document.getElementById('home-timestamp').textContent = timeString;
+      
       goToScreen3();
     }
     
@@ -653,6 +698,12 @@
     }
 
     function doneCheckIn() {
+      // Clear auto-transition timeout if user clicks Done early
+      if (autoTransitionTimeout) {
+        clearTimeout(autoTransitionTimeout);
+        autoTransitionTimeout = null;
+      }
+      
       // Set checked in status
       isCheckedIn = true;
       
@@ -672,6 +723,15 @@
         pendingUpdate.classList.add('hidden');
         successBadge.classList.remove('hidden');
         successBadge.classList.add('flex');
+        
+        // Trigger zoom animation by resetting the badge container
+        const badgeContainer = successBadge.querySelector('.badge-container');
+        if (badgeContainer) {
+          // Remove and re-add animation class to trigger it
+          badgeContainer.style.animation = 'none';
+          badgeContainer.offsetHeight; // Force reflow
+          badgeContainer.style.animation = '';
+        }
       } else {
         pendingUpdate.classList.remove('hidden');
         successBadge.classList.add('hidden');
@@ -682,10 +742,12 @@
       const btn = document.getElementById('check-in-btn');
       if (isCheckedIn) {
         btn.textContent = 'Edit';
-        btn.className = 'w-full bg-transparent hover:bg-gray-50 text-rose-400 text-lg font-medium py-4 rounded-2xl mb-8 border-2 border-rose-400 transition-all';
+        btn.className = 'w-full bg-transparent hover:bg-gray-50 text-rose-400 text-lg font-medium py-4 rounded-2xl mb-8 border-2 transition-all';
+        btn.style.borderColor = 'rgba(251, 113, 133, 0.5)'; // rose-400 at 50% opacity
       } else {
         btn.textContent = 'Check-in Now';
         btn.className = 'w-full bg-rose-400 hover:bg-rose-500 text-white text-lg font-medium py-4 rounded-2xl mb-8 shadow-sm check-in-btn transition-all';
+        btn.style.borderColor = '';
       }
       
       // Count blockers - both projects can be blockers
