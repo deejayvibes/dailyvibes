@@ -174,8 +174,19 @@
 
       <div class="fade-in-up" style="animation-delay: 0.4s">
         <h2 class="text-2xl font-semibold text-gray-900 mb-2">Team updates</h2>
-        <p id="team-status" class="text-gray-500 text-sm mb-6">4 of 6 checked in • 0 blockers</p>
-        <div class="grid grid-cols-3 gap-x-4 gap-y-6">
+        <div class="flex items-center justify-between mb-6">
+          <p id="team-status" class="text-gray-500 text-sm">4 of 6 checked in • 0 blockers</p>
+          <!-- Toggle button with label -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500">See Details</span>
+            <button id="view-toggle" onclick="toggleView()" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none bg-gray-200">
+              <span id="toggle-dot" class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Grid view (default) -->
+        <div id="grid-view" class="grid grid-cols-3 gap-x-4 gap-y-6">
           <div class="flex flex-col items-center team-member scale-in" style="animation-delay: 0.5s">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-3 bg-green-100 border-2 border-green-300">🦉</div>
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Aarav Sharma</p>
@@ -206,6 +217,146 @@
             <p class="text-sm text-gray-900 text-center font-medium leading-tight">Vihaan Patel</p>
           </div>
         </div>
+        
+        <!-- Column/List view (hidden by default) -->
+        <div id="list-view" class="hidden flex flex-col gap-6">
+          <!-- Checked-in group -->
+          <div>
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">Checked-in</h3>
+            <div class="bg-white rounded-xl p-4 flex flex-col gap-3">
+              <!-- Vibe emoji legend -->
+              <div class="flex items-center justify-end gap-6 pb-3 border-b border-gray-100" style="padding-right: 16px;">
+                <span class="text-base">🔥</span>
+                <span class="text-base">😊</span>
+                <span class="text-base">😰</span>
+                <span class="text-base">😭</span>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex items-center justify-center text-2xl">🦉</div>
+                  <div class="flex flex-col" style="gap: 4px;">
+                    <p class="text-sm text-gray-900 font-medium">Aarav Sharma</p>
+                    <p id="aarav-time" class="text-xs text-gray-400"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6" style="padding-right: 16px;">
+                  <span class="text-xs text-gray-600 w-4 text-center">1</span>
+                  <span class="text-xs text-gray-600 w-4 text-center">2</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex items-center justify-center text-2xl">🦊</div>
+                  <div class="flex flex-col" style="gap: 4px;">
+                    <p class="text-sm text-gray-900 font-medium">Ananya Iyer</p>
+                    <p id="ananya-time" class="text-xs text-gray-400"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6" style="padding-right: 16px;">
+                  <span class="text-xs text-gray-600 w-4 text-center">1</span>
+                  <span class="text-xs text-gray-600 w-4 text-center">1</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex items-center justify-center text-2xl">🐥</div>
+                  <div class="flex flex-col" style="gap: 4px;">
+                    <p class="text-sm text-gray-900 font-medium">Ishaan Mehta</p>
+                    <p id="ishaan-time" class="text-xs text-gray-400"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6" style="padding-right: 16px;">
+                  <span class="text-xs text-gray-600 w-4 text-center">2</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex items-center justify-center text-2xl">🐑</div>
+                  <div class="flex flex-col" style="gap: 4px;">
+                    <p class="text-sm text-gray-900 font-medium">Riyas Ahmed</p>
+                    <p id="riyas-time" class="text-xs text-gray-400"></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6" style="padding-right: 16px;">
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-600 w-4 text-center">2</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span class="text-xs text-gray-300 w-4 text-center">-</span>
+                </div>
+              </div>
+              
+              <div id="advait-list-item" class="hidden justify-between items-center relative">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 flex items-center justify-center text-2xl">🐄</div>
+                  <div class="flex flex-col" style="gap: 4px;">
+                    <p class="text-sm text-gray-900 font-medium">Advait Kulkarni</p>
+                    <div class="flex items-center gap-2">
+                      <p id="advait-time" class="text-xs text-gray-400"></p>
+                      <!-- Message button next to timestamp -->
+                      <button id="advait-message-btn" class="hidden" onclick="handleMessageClick()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-6" style="padding-right: 16px;">
+                  <span id="advait-vibing" class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span id="advait-flowing" class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span id="advait-struggling" class="text-xs text-gray-300 w-4 text-center">-</span>
+                  <span id="advait-blocked" class="text-xs text-gray-300 w-4 text-center">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pending group -->
+          <div>
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">Pending</h3>
+            <div class="bg-white rounded-xl p-4 flex flex-col gap-3">
+              <div id="advait-list-item-pending" class="flex items-center gap-3 relative">
+                <div class="w-10 h-10 flex items-center justify-center text-2xl">🐄</div>
+                <p class="text-sm text-gray-900 font-medium">Advait Kulkarni</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center text-2xl">🐵</div>
+                <p class="text-sm text-gray-900 font-medium">Vihaan Patel</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue Details Overlay Modal -->
+  <div id="issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+      <!-- Close button -->
+      <button onclick="closeIssueModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      
+      <!-- Modal content -->
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Issue Details</h2>
+      
+      <div id="modal-content" class="space-y-4">
+        <!-- Content will be dynamically inserted here -->
       </div>
     </div>
   </div>
@@ -424,7 +575,10 @@
     let project1Helper = '';
     let project2Helper = '';
     let isCheckedIn = false;
+    let isListView = false;
     let autoTransitionTimeout = null;
+    let advaitSubmissionTime = null;
+    let timeUpdateInterval = null;
 
     const moodStyles = {
       Vibing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '🔥' },
@@ -451,6 +605,215 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen2').classList.add('active');
       window.scrollTo(0, 0);
+    }
+
+    // Toggle between grid and list view
+    function toggleView() {
+      isListView = !isListView;
+      const gridView = document.getElementById('grid-view');
+      const listView = document.getElementById('list-view');
+      const toggleBtn = document.getElementById('view-toggle');
+      const toggleDot = document.getElementById('toggle-dot');
+      
+      if (isListView) {
+        // Switch to list view
+        gridView.classList.add('hidden');
+        listView.classList.remove('hidden');
+        toggleBtn.classList.remove('bg-gray-200');
+        toggleBtn.classList.add('bg-rose-400');
+        toggleDot.classList.remove('translate-x-1');
+        toggleDot.classList.add('translate-x-6');
+        
+        // Update Advait's position and blocker icon in list view
+        updateListViewStatus();
+        
+        // Start timestamp updates
+        startTimestampUpdates();
+      } else {
+        // Switch to grid view
+        gridView.classList.remove('hidden');
+        listView.classList.add('hidden');
+        toggleBtn.classList.remove('bg-rose-400');
+        toggleBtn.classList.add('bg-gray-200');
+        toggleDot.classList.remove('translate-x-6');
+        toggleDot.classList.add('translate-x-1');
+        
+        // Stop timestamp updates
+        stopTimestampUpdates();
+      }
+    }
+    
+    // Update blocker icon in list view based on check-in status
+    function updateListViewStatus() {
+      const advaitListCheckedIn = document.getElementById('advait-list-item');
+      const advaitListPending = document.getElementById('advait-list-item-pending');
+      
+      if (isCheckedIn) {
+        // Move Advait to checked-in group
+        advaitListCheckedIn.classList.remove('hidden');
+        advaitListCheckedIn.classList.add('flex');
+        advaitListPending.classList.add('hidden');
+        
+        // Update Advait's vibe status numbers
+        updateAdvaitVibeStatus();
+      } else {
+        // Keep Advait in pending group
+        advaitListCheckedIn.classList.add('hidden');
+        advaitListCheckedIn.classList.remove('flex');
+        advaitListPending.classList.remove('hidden');
+      }
+      
+      // Update timestamps
+      updateTimestamps();
+    }
+    
+    // Update Advait's vibe status display
+    function updateAdvaitVibeStatus() {
+      // Reset all to '-'
+      document.getElementById('advait-vibing').textContent = '-';
+      document.getElementById('advait-vibing').className = 'text-xs text-gray-300 w-4 text-center';
+      document.getElementById('advait-flowing').textContent = '-';
+      document.getElementById('advait-flowing').className = 'text-xs text-gray-300 w-4 text-center';
+      document.getElementById('advait-struggling').textContent = '-';
+      document.getElementById('advait-struggling').className = 'text-xs text-gray-300 w-4 text-center';
+      document.getElementById('advait-blocked').textContent = '-';
+      document.getElementById('advait-blocked').className = 'text-xs text-gray-300 w-4 text-center';
+      
+      const messageBtn = document.getElementById('advait-message-btn');
+      
+      // Count projects by mood
+      const moodCounts = { Vibing: 0, Flowing: 0, Struggling: 0, Blocked: 0 };
+      
+      if (selectedProject1Mood) moodCounts[selectedProject1Mood]++;
+      if (selectedProject2Mood) moodCounts[selectedProject2Mood]++;
+      
+      // Update display for non-zero values
+      if (moodCounts.Vibing > 0) {
+        document.getElementById('advait-vibing').textContent = moodCounts.Vibing;
+        document.getElementById('advait-vibing').className = 'text-xs text-gray-600 w-4 text-center';
+      }
+      if (moodCounts.Flowing > 0) {
+        document.getElementById('advait-flowing').textContent = moodCounts.Flowing;
+        document.getElementById('advait-flowing').className = 'text-xs text-gray-600 w-4 text-center';
+      }
+      if (moodCounts.Struggling > 0) {
+        document.getElementById('advait-struggling').textContent = moodCounts.Struggling;
+        document.getElementById('advait-struggling').className = 'text-xs text-gray-600 w-4 text-center';
+      }
+      if (moodCounts.Blocked > 0) {
+        document.getElementById('advait-blocked').textContent = moodCounts.Blocked;
+        document.getElementById('advait-blocked').className = 'text-xs text-gray-600 w-4 text-center';
+      }
+      
+      // Show message button only if struggling/blocked AND issue text exists
+      const hasIssueText = (project1Issue && project1Issue.trim()) || (project2Issue && project2Issue.trim());
+      if ((moodCounts.Struggling > 0 || moodCounts.Blocked > 0) && hasIssueText) {
+        messageBtn.classList.remove('hidden');
+      } else {
+        messageBtn.classList.add('hidden');
+      }
+    }
+    
+    // Handle message button click
+    function handleMessageClick() {
+      const modalContent = document.getElementById('modal-content');
+      let html = '';
+      
+      // Check project 1 for struggling/blocked with issue text
+      if ((selectedProject1Mood === 'Struggling' || selectedProject1Mood === 'Blocked') && project1Issue && project1Issue.trim()) {
+        html += `
+          <div class="border-b border-gray-200 pb-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">${moodStyles[selectedProject1Mood].emoji}</span>
+              <h3 class="text-base font-semibold text-gray-900">Agent Dashboard</h3>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Status: <span class="font-medium ${moodTextColors[selectedProject1Mood]}">${selectedProject1Mood}</span></p>
+            <p class="text-sm text-gray-700 italic mb-3">"${project1Issue}"</p>
+            ${project1Helper ? `<p class="text-sm text-gray-600">@ ${project1Helper}</p>` : ''}
+          </div>
+        `;
+      }
+      
+      // Check project 2 for struggling/blocked with issue text
+      if ((selectedProject2Mood === 'Struggling' || selectedProject2Mood === 'Blocked') && project2Issue && project2Issue.trim()) {
+        html += `
+          <div class="${html ? 'pt-4' : ''}">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">${moodStyles[selectedProject2Mood].emoji}</span>
+              <h3 class="text-base font-semibold text-gray-900">Design Systems</h3>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Status: <span class="font-medium ${moodTextColors[selectedProject2Mood]}">${selectedProject2Mood}</span></p>
+            <p class="text-sm text-gray-700 italic mb-3">"${project2Issue}"</p>
+            ${project2Helper ? `<p class="text-sm text-gray-600">@ ${project2Helper}</p>` : ''}
+          </div>
+        `;
+      }
+      
+      modalContent.innerHTML = html || '<p class="text-sm text-gray-500">No issue details available.</p>';
+      
+      // Show modal
+      document.getElementById('issue-modal').classList.remove('hidden');
+    }
+    
+    // Close issue modal
+    function closeIssueModal() {
+      document.getElementById('issue-modal').classList.add('hidden');
+    }
+    
+    // Calculate time ago text
+    function getTimeAgoText(minutesAgo) {
+      if (minutesAgo < 60) {
+        return `${minutesAgo} min ago`;
+      } else {
+        const hours = Math.floor(minutesAgo / 60);
+        const mins = minutesAgo % 60;
+        if (mins === 0) {
+          return `${hours}h ago`;
+        }
+        return `${hours}h ${mins}m ago`;
+      }
+    }
+    
+    // Update all timestamps
+    function updateTimestamps() {
+      const now = new Date();
+      
+      if (isCheckedIn && advaitSubmissionTime) {
+        // Advait has checked in - calculate based on his submission time
+        const advaitMinutesAgo = Math.floor((now - advaitSubmissionTime) / 60000);
+        
+        // Update each person's timestamp
+        document.getElementById('aarav-time').textContent = getTimeAgoText(advaitMinutesAgo + 32);
+        document.getElementById('ananya-time').textContent = getTimeAgoText(advaitMinutesAgo + 24);
+        document.getElementById('ishaan-time').textContent = getTimeAgoText(advaitMinutesAgo + 18);
+        document.getElementById('riyas-time').textContent = getTimeAgoText(advaitMinutesAgo + 14);
+        document.getElementById('advait-time').textContent = getTimeAgoText(advaitMinutesAgo);
+      } else {
+        // Advait hasn't checked in - use fixed offsets from current time
+        const currentMinute = now.getMinutes();
+        
+        document.getElementById('aarav-time').textContent = getTimeAgoText(32);
+        document.getElementById('ananya-time').textContent = getTimeAgoText(24);
+        document.getElementById('ishaan-time').textContent = getTimeAgoText(18);
+        document.getElementById('riyas-time').textContent = getTimeAgoText(14);
+      }
+    }
+    
+    // Start/stop timestamp updates
+    function startTimestampUpdates() {
+      if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval);
+      }
+      updateTimestamps();
+      // Update every minute
+      timeUpdateInterval = setInterval(updateTimestamps, 60000);
+    }
+    
+    function stopTimestampUpdates() {
+      if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval);
+        timeUpdateInterval = null;
+      }
     }
 
     function goToScreen3() {
@@ -606,6 +969,7 @@
       
       // Capture and display timestamp
       const now = new Date();
+      advaitSubmissionTime = now; // Store submission time for timestamp calculations
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const timeString = `Updated [${hours}:${minutes}]`;
@@ -761,7 +1125,7 @@
       const checkedInCount = isCheckedIn ? 5 : 4;
       document.getElementById('team-status').textContent = `${checkedInCount} of 6 checked in • ${blockerCount} blocker${blockerCount !== 1 ? 's' : ''}`;
       
-      // Update Advait's card
+      // Update Advait's card in grid view
       const advaitCard = document.getElementById('advait-card');
       const blockerIcon = document.getElementById('advait-blocker-icon');
       
@@ -781,6 +1145,9 @@
         blockerIcon.classList.add('hidden');
         blockerIcon.classList.remove('flex');
       }
+      
+      // Update list view if currently active
+      updateListViewStatus();
     }
   </script>
 </body>
