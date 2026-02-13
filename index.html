@@ -513,13 +513,17 @@
         <!-- Update History Timeline (moved to top when editing) -->
         <div id="edit-history-timeline" class="hidden pb-6 mb-4">
           <div class="flex items-baseline gap-2 mb-1">
-            <h3 class="text-base font-semibold text-gray-900">Update History</h3>
-            <span id="edit-limit-bracket" class="hidden text-xs text-gray-500">(Daily limit reached)</span>
+            <h3 class="text-base font-semibold text-gray-900">Check-in History</h3>
           </div>
           <p class="text-xs text-gray-500 mb-4">1 edit/day limit. Keep the vibes consistent.</p>
           <div id="timeline-list" class="space-y-4">
             <!-- Timeline items will be inserted here -->
           </div>
+        </div>
+
+        <!-- Daily limit reached message -->
+        <div id="daily-limit-message" class="hidden text-center mb-4">
+          <p class="text-xs text-gray-500">(Daily check-in limit reached)</p>
         </div>
 
         <!-- Project 1 -->
@@ -635,7 +639,12 @@
 
       <!-- Submit Button -->
       <div class="fixed bottom-0 left-0 right-0 bg-gray-50 py-6">
-        <div class="max-w-md mx-auto px-4">
+        <div class="max-w-md mx-auto px-4 space-y-3">
+          <!-- Discard button - only shown when editing -->
+          <button id="discardBtn" onclick="discardChanges()" class="hidden w-full py-4 rounded-2xl text-lg font-medium bg-transparent text-rose-400 border-2 border-rose-400 hover:bg-rose-50 transition-all">
+            Discard
+          </button>
+          <!-- Submit button -->
           <button id="submitBtn" onclick="handleSubmit()" class="submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500">
             Submit Check-in
           </button>
@@ -679,7 +688,7 @@
           </button>
           <p id="edit-subtitle" class="text-xs text-gray-400 mt-1">1 edit/day limit. Keep the vibes consistent.</p>
           <p id="edit-limit-msg" class="hidden text-sm text-gray-500">
-            Daily edit used. Catch you tomorrow for more updates.
+            Daily check-in limit reached. Catch you tomorrow for more updates.
           </p>
         </div>
 
@@ -827,7 +836,7 @@
             </svg>
           </div>
           <div class="space-y-3">
-            <!-- Feb 11 - 2 Vibing -->
+            <!-- Feb 11 - 1 Vibing, 1 Blocked -->
             <div class="flex items-center justify-between py-2">
               <div>
                 <p class="text-sm font-medium text-gray-900">2 Projects</p>
@@ -835,7 +844,7 @@
               </div>
               <div class="flex items-center gap-0.5">
                 <div class="w-3.5 h-3.5 rounded-full" style="background-color: #22C55E;"></div>
-                <div class="w-3.5 h-3.5 rounded-full" style="background-color: #22C55E;"></div>
+                <div class="w-3.5 h-3.5 rounded-full" style="background-color: #EF4444;"></div>
               </div>
             </div>
             <!-- Feb 10 - 1 Vibing, 1 Flowing -->
@@ -876,19 +885,62 @@
               </button>
             </div>
             <div class="border-t border-gray-200 pt-4" id="reminder-time-section">
-              <p class="text-sm font-medium text-gray-900 mb-2">Reminder Time</p>
-              <div class="relative">
-                <select id="reminder-time-select" class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 appearance-none text-sm text-gray-700 bg-white cursor-pointer">
-                  <option>9:00 AM</option>
-                  <option>10:00 AM</option>
-                  <option>11:00 AM</option>
-                  <option>12:00 PM</option>
-                  <option>1:00 PM</option>
-                  <option>2:00 PM</option>
-                </select>
-                <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
+              <p class="text-sm font-medium text-gray-900 mb-3">Reminder Time</p>
+              <div class="flex items-center gap-3">
+                <!-- Hour selector -->
+                <div class="flex-1">
+                  <div class="relative">
+                    <input type="number" id="hour-input" min="1" max="12" value="9" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-rose-400 text-center text-lg font-medium text-gray-900 bg-white">
+                    <div class="absolute inset-y-0 right-2 flex flex-col justify-center">
+                      <button onclick="incrementHour()" class="h-5 flex items-center justify-center text-gray-400 hover:text-gray-700">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                          <path d="M6 3L9 7H3L6 3Z"/>
+                        </svg>
+                      </button>
+                      <button onclick="decrementHour()" class="h-5 flex items-center justify-center text-gray-400 hover:text-gray-700">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                          <path d="M6 9L3 5H9L6 9Z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p class="text-xs text-gray-400 text-center mt-1">Hour</p>
+                </div>
+                
+                <span class="text-2xl text-gray-400 font-light mb-5">:</span>
+                
+                <!-- Minute selector -->
+                <div class="flex-1">
+                  <div class="relative">
+                    <input type="number" id="minute-input" min="0" max="59" value="00" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-rose-400 text-center text-lg font-medium text-gray-900 bg-white">
+                    <div class="absolute inset-y-0 right-2 flex flex-col justify-center">
+                      <button onclick="incrementMinute()" class="h-5 flex items-center justify-center text-gray-400 hover:text-gray-700">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                          <path d="M6 3L9 7H3L6 3Z"/>
+                        </svg>
+                      </button>
+                      <button onclick="decrementMinute()" class="h-5 flex items-center justify-center text-gray-400 hover:text-gray-700">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                          <path d="M6 9L3 5H9L6 9Z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p class="text-xs text-gray-400 text-center mt-1">Minute</p>
+                </div>
+                
+                <!-- AM/PM toggle -->
+                <div class="flex-1">
+                  <div class="bg-gray-100 rounded-xl p-1 flex">
+                    <button id="am-btn" onclick="setAmPm('AM')" class="flex-1 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 shadow-sm transition-all">
+                      AM
+                    </button>
+                    <button id="pm-btn" onclick="setAmPm('PM')" class="flex-1 py-2 rounded-lg text-sm font-medium text-gray-500 transition-all">
+                      PM
+                    </button>
+                  </div>
+                  <p class="text-xs text-gray-400 text-center mt-1">Period</p>
+                </div>
               </div>
             </div>
           </div>
@@ -984,6 +1036,10 @@
     let advaitSubmissionTime = null;
     let timeUpdateInterval = null;
     let coinFlipInterval = null;
+    
+    // Track if user has made changes while editing
+    let hasUnsavedChanges = false;
+    let originalState = null; // Store original state when editing
 
     const moodStyles = {
       Vibing: { bg: '#F0FFF4', border: '#22C55E', shadow: '0 4px 12px rgba(34, 197, 94, 0.15)', emoji: '🔥' },
@@ -1004,6 +1060,25 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen1').classList.add('active');
       window.scrollTo(0, 0);
+      
+      // If user was editing and navigates back, discard unsaved changes
+      if (isCheckedIn && hasUnsavedChanges && originalState) {
+        selectedProject1Mood = originalState.project1Mood;
+        selectedProject2Mood = originalState.project2Mood;
+        project1Issue = originalState.project1Issue;
+        project2Issue = originalState.project2Issue;
+        project1Helper = originalState.project1Helper;
+        project2Helper = originalState.project2Helper;
+        
+        // Reset change tracking
+        hasUnsavedChanges = false;
+        originalState = null;
+      }
+      
+      // If user has already checked in, update home page to reflect that
+      if (isCheckedIn) {
+        updateHomePage();
+      }
     }
 
     function goToScreen2() {
@@ -1011,48 +1086,129 @@
       document.getElementById('screen2').classList.add('active');
       window.scrollTo(0, 0);
       
+      // Restore previous selections if editing
+      if (isCheckedIn) {
+        restoreCheckInState();
+        
+        // Save original state to compare for changes
+        originalState = {
+          project1Mood: selectedProject1Mood,
+          project2Mood: selectedProject2Mood,
+          project1Issue: project1Issue,
+          project2Issue: project2Issue,
+          project1Helper: project1Helper,
+          project2Helper: project2Helper
+        };
+        
+        // Reset change tracking
+        hasUnsavedChanges = false;
+      }
+      
       // Check if edit limit reached
       const limitReached = editHistory.length >= 2;
       const submitBtn = document.getElementById('submitBtn');
-      const editLimitBracket = document.getElementById('edit-limit-bracket');
+      const discardBtn = document.getElementById('discardBtn');
+      const dailyLimitMessage = document.getElementById('daily-limit-message');
       const project1Card = document.getElementById('project1-card');
       const project2Card = document.getElementById('project2');
       
       if (limitReached) {
-        // Disable project cards
-        project1Card.style.opacity = '0.5';
-        project1Card.style.pointerEvents = 'none';
-        project2Card.style.opacity = '0.5';
-        project2Card.style.pointerEvents = 'none';
+        // Hide project cards completely when limit is reached
+        project1Card.classList.add('hidden');
+        project2Card.classList.add('hidden');
         
         // Change button to Close
         submitBtn.textContent = 'Close';
         submitBtn.onclick = function() { goToScreen1(); };
         
-        // Show bracket message
-        editLimitBracket.classList.remove('hidden');
+        // Hide discard button
+        discardBtn.classList.add('hidden');
+        
+        // Show daily limit message
+        dailyLimitMessage.classList.remove('hidden');
       } else {
-        // Enable project cards
+        // Show and enable project cards
+        project1Card.classList.remove('hidden');
+        project2Card.classList.remove('hidden');
         project1Card.style.opacity = '1';
         project1Card.style.pointerEvents = 'auto';
         project2Card.style.opacity = '1';
         project2Card.style.pointerEvents = 'auto';
         
-        // Keep button as Submit Check-in
-        submitBtn.textContent = 'Submit Check-in';
-        submitBtn.onclick = handleSubmit;
+        // Setup buttons based on whether user is editing
+        if (isCheckedIn) {
+          // User is editing - show Discard button and set submit to inactive state
+          discardBtn.classList.remove('hidden');
+          submitBtn.textContent = 'Final Check-in';
+          submitBtn.disabled = true;
+          submitBtn.className = 'submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-gray-300 text-gray-500 cursor-not-allowed';
+          submitBtn.onclick = handleSubmit;
+        } else {
+          // User is creating first check-in
+          discardBtn.classList.add('hidden');
+          submitBtn.textContent = 'Submit Check-in';
+          submitBtn.disabled = false;
+          submitBtn.className = 'submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500';
+          submitBtn.onclick = handleSubmit;
+        }
         
-        // Hide bracket message
-        editLimitBracket.classList.add('hidden');
+        // Hide daily limit message
+        dailyLimitMessage.classList.add('hidden');
       }
       
-      // Show edit history timeline if user is editing
+      // Show edit history timeline if user is editing (has checked in at least once)
       const timeline = document.getElementById('edit-history-timeline');
-      if (isCheckedIn && editHistory.length > 0) {
+      if (isCheckedIn) {
+        // Show timeline whenever user is editing, even if editHistory is empty
+        // (the first submission creates the original entry to display)
         timeline.classList.remove('hidden');
-        renderEditHistory();
+        if (editHistory.length > 0) {
+          renderEditHistory();
+        }
       } else {
         timeline.classList.add('hidden');
+      }
+    }
+    
+    // Restore check-in state when editing
+    function restoreCheckInState() {
+      // Always restore from the latest editHistory entry (most recent submission)
+      if (editHistory.length > 0) {
+        const latestEntry = editHistory[editHistory.length - 1];
+        
+        // Update global state from latest entry
+        selectedProject1Mood = latestEntry.project1Mood;
+        selectedProject2Mood = latestEntry.project2Mood;
+        project1Issue = latestEntry.project1Issue;
+        project2Issue = latestEntry.project2Issue;
+        project1Helper = latestEntry.project1Helper;
+        project2Helper = latestEntry.project2Helper;
+      }
+      
+      // Restore Project 1 mood visually
+      if (selectedProject1Mood) {
+        selectMood(1, selectedProject1Mood);
+        
+        // Restore Project 1 fields if they were filled
+        if (project1Issue) {
+          document.getElementById('project1-issue').value = project1Issue;
+        }
+        if (project1Helper) {
+          document.getElementById('project1-helper').value = project1Helper;
+        }
+      }
+      
+      // Restore Project 2 mood visually
+      if (selectedProject2Mood) {
+        selectMood(2, selectedProject2Mood);
+        
+        // Restore Project 2 fields if they were filled
+        if (project2Issue) {
+          document.getElementById('project2-issue').value = project2Issue;
+        }
+        if (project2Helper) {
+          document.getElementById('project2-helper').value = project2Helper;
+        }
       }
     }
 
@@ -1449,6 +1605,9 @@
           document.getElementById('project2-helper').value = '';
         }
       }
+      
+      // Check for changes and update button state
+      checkForChanges();
     }
 
     function unlockProject2() {
@@ -1457,6 +1616,68 @@
       document.getElementById('project2').querySelector('span').className = 'text-sm text-gray-400';
       document.getElementById('project2-locked-msg').classList.add('hidden');
       document.getElementById('project2-moods').classList.remove('hidden');
+    }
+    
+    // Check if user has made changes while editing
+    function checkForChanges() {
+      if (!isCheckedIn || !originalState) return;
+      
+      // Get current values
+      const currentIssue1 = document.getElementById('project1-issue').value;
+      const currentIssue2 = document.getElementById('project2-issue').value;
+      const currentHelper1 = document.getElementById('project1-helper').value;
+      const currentHelper2 = document.getElementById('project2-helper').value;
+      
+      // Check if anything has changed
+      const hasChanges = 
+        selectedProject1Mood !== originalState.project1Mood ||
+        selectedProject2Mood !== originalState.project2Mood ||
+        currentIssue1 !== originalState.project1Issue ||
+        currentIssue2 !== originalState.project2Issue ||
+        currentHelper1 !== originalState.project1Helper ||
+        currentHelper2 !== originalState.project2Helper;
+      
+      hasUnsavedChanges = hasChanges;
+      updateSubmitButton();
+    }
+    
+    // Update submit button state based on changes
+    function updateSubmitButton() {
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (isCheckedIn && editHistory.length < 2) {
+        if (hasUnsavedChanges) {
+          // User has made changes - enable button
+          submitBtn.disabled = false;
+          submitBtn.className = 'submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500';
+          submitBtn.textContent = 'Final Check-in';
+        } else {
+          // No changes - disable button
+          submitBtn.disabled = true;
+          submitBtn.className = 'submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-gray-300 text-gray-500 cursor-not-allowed';
+          submitBtn.textContent = 'Final Check-in';
+        }
+      }
+    }
+    
+    // Discard changes and return to home
+    function discardChanges() {
+      // Restore original state
+      if (originalState) {
+        selectedProject1Mood = originalState.project1Mood;
+        selectedProject2Mood = originalState.project2Mood;
+        project1Issue = originalState.project1Issue;
+        project2Issue = originalState.project2Issue;
+        project1Helper = originalState.project1Helper;
+        project2Helper = originalState.project2Helper;
+      }
+      
+      // Reset change tracking
+      hasUnsavedChanges = false;
+      originalState = null;
+      
+      // Go back to home
+      goToScreen1();
     }
 
     // Submit
@@ -1543,6 +1764,13 @@
         project2Helper: project2Helper
       });
       
+      // Set checked in status (user has now submitted their check-in)
+      isCheckedIn = true;
+      
+      // Reset change tracking since changes are now saved
+      hasUnsavedChanges = false;
+      originalState = null;
+      
       goToScreen3();
     }
     
@@ -1550,17 +1778,29 @@
     document.addEventListener('DOMContentLoaded', function() {
       const project1IssueField = document.getElementById('project1-issue');
       const project2IssueField = document.getElementById('project2-issue');
+      const project1HelperField = document.getElementById('project1-helper');
+      const project2HelperField = document.getElementById('project2-helper');
       
       if (project1IssueField) {
         project1IssueField.addEventListener('focus', function() {
           this.classList.remove('error-field');
         });
+        project1IssueField.addEventListener('input', checkForChanges);
       }
       
       if (project2IssueField) {
         project2IssueField.addEventListener('focus', function() {
           this.classList.remove('error-field');
         });
+        project2IssueField.addEventListener('input', checkForChanges);
+      }
+      
+      if (project1HelperField) {
+        project1HelperField.addEventListener('change', checkForChanges);
+      }
+      
+      if (project2HelperField) {
+        project2HelperField.addEventListener('change', checkForChanges);
       }
     });
 
@@ -1645,7 +1885,7 @@
         
         // Original is now the last in reversed array
         const isOriginal = index === (reversedHistory.length - 1);
-        const label = isOriginal ? 'Original Entry' : 'Edited Entry';
+        const label = isOriginal ? 'Original Entry' : 'Final Entry';
         
         // Build issue details HTML
         let issueDetailsHTML = '';
@@ -1679,7 +1919,7 @@
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-sm font-medium text-gray-900">${label}</span>
-                <span class="text-xs text-gray-400">${timeString}</span>
+                <span class="text-xs text-gray-400">At ${timeString}</span>
               </div>
               <div class="flex items-center gap-1 mb-1">
                 <span class="text-lg">${mood1Emoji}</span>
@@ -2025,6 +2265,70 @@
         emojiEl.remove();
       }, 3000);
     }
+    
+    // Time picker functions
+    let currentAmPm = 'AM';
+    
+    function incrementHour() {
+      const hourInput = document.getElementById('hour-input');
+      let hour = parseInt(hourInput.value);
+      hour = hour >= 12 ? 1 : hour + 1;
+      hourInput.value = hour;
+    }
+    
+    function decrementHour() {
+      const hourInput = document.getElementById('hour-input');
+      let hour = parseInt(hourInput.value);
+      hour = hour <= 1 ? 12 : hour - 1;
+      hourInput.value = hour;
+    }
+    
+    function incrementMinute() {
+      const minuteInput = document.getElementById('minute-input');
+      let minute = parseInt(minuteInput.value);
+      minute = minute >= 59 ? 0 : minute + 1;
+      minuteInput.value = String(minute).padStart(2, '0');
+    }
+    
+    function decrementMinute() {
+      const minuteInput = document.getElementById('minute-input');
+      let minute = parseInt(minuteInput.value);
+      minute = minute <= 0 ? 59 : minute - 1;
+      minuteInput.value = String(minute).padStart(2, '0');
+    }
+    
+    function setAmPm(period) {
+      currentAmPm = period;
+      const amBtn = document.getElementById('am-btn');
+      const pmBtn = document.getElementById('pm-btn');
+      
+      if (period === 'AM') {
+        amBtn.className = 'flex-1 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 shadow-sm transition-all';
+        pmBtn.className = 'flex-1 py-2 rounded-lg text-sm font-medium text-gray-500 transition-all';
+      } else {
+        amBtn.className = 'flex-1 py-2 rounded-lg text-sm font-medium text-gray-500 transition-all';
+        pmBtn.className = 'flex-1 py-2 rounded-lg text-sm font-medium bg-white text-gray-900 shadow-sm transition-all';
+      }
+    }
+    
+    // Format minute input on blur
+    document.addEventListener('DOMContentLoaded', function() {
+      const minuteInput = document.getElementById('minute-input');
+      if (minuteInput) {
+        minuteInput.addEventListener('blur', function() {
+          const val = parseInt(this.value) || 0;
+          this.value = String(Math.min(59, Math.max(0, val))).padStart(2, '0');
+        });
+      }
+      
+      const hourInput = document.getElementById('hour-input');
+      if (hourInput) {
+        hourInput.addEventListener('blur', function() {
+          const val = parseInt(this.value) || 1;
+          this.value = Math.min(12, Math.max(1, val));
+        });
+      }
+    });
   </script>
 </body>
 </html>
