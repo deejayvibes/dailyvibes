@@ -495,8 +495,8 @@
   </div>
 
   <!-- About Knock-Knock Modal -->
-  <div id="about-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
-    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto px-8 py-6 relative">
+  <div id="about-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 py-8">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-y-auto px-8 py-6 relative my-auto shadow-2xl">
       <!-- Close button -->
       <button onclick="closeAboutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2002,9 +2002,15 @@
                 <span class="text-sm font-medium text-gray-900">${label}</span>
                 <span class="text-xs text-gray-400">At ${timeString}</span>
               </div>
-              <div class="flex items-center gap-1 mb-1">
-                <span class="text-lg">${mood1Emoji}</span>
-                <span class="text-lg">${mood2Emoji}</span>
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">${mood1Emoji}</span>
+                  <span class="text-xs text-gray-600">Agent Dashboard</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">${mood2Emoji}</span>
+                  <span class="text-xs text-gray-600">Design Systems</span>
+                </div>
               </div>
               ${issueDetailsHTML}
             </div>
