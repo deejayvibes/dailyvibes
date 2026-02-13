@@ -51,11 +51,7 @@
       box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
     }
     
-    /* Hover state - subtle lift and glow */
-    .team-member.checked-in:hover .w-20 {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
-    }
+    /* No hover state - just cursor change */
     
     /* Press state - smooth press down */
     .team-member.checked-in:active .w-20 {
@@ -284,7 +280,12 @@
         </div>
         <h2 class="text-xl font-bold text-gray-900 mb-2 text-center">You're all set!</h2>
         <p class="text-gray-600 text-center">Your Check-in has been submitted</p>
-        <p id="home-timestamp" class="text-gray-400 text-sm text-center">Updated [--:--]</p>
+        <div class="flex items-center justify-center gap-3">
+          <p id="home-timestamp" class="text-gray-400 text-sm text-center">Updated [--:--]</p>
+          <button id="home-edit-btn" class="hidden text-rose-400 text-sm underline hover:text-rose-500 transition-colors bg-transparent border-0" onclick="goToScreen2()">
+            View
+          </button>
+        </div>
       </div>
 
       <!-- Check-in Button -->
@@ -499,14 +500,26 @@
       <div class="max-w-md mx-auto px-4 py-6 pb-32">
 
 
-        <div class="flex items-center gap-4 mb-8">
+        <div class="flex items-center mb-8">
           <button onclick="goToScreen1()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.921 7.5L7.714 13.292L7 14L0 7L7 0L7.714 0.708L1.92 6.5H14V7.5H1.921Z" fill="#6B6B6B"/>
             </svg>
             <span class="text-sm">Back</span>
           </button>
-          <h1 class="text-xl font-semibold text-gray-900">Drop the vibe for today</h1>
+          <h1 class="text-xl font-semibold text-gray-900 flex-1 text-center pr-14">Drop the vibe for today</h1>
+        </div>
+
+        <!-- Update History Timeline (moved to top when editing) -->
+        <div id="edit-history-timeline" class="hidden pb-6 mb-4">
+          <div class="flex items-baseline gap-2 mb-1">
+            <h3 class="text-base font-semibold text-gray-900">Update History</h3>
+            <span id="edit-limit-bracket" class="hidden text-xs text-gray-500">(Daily limit reached)</span>
+          </div>
+          <p class="text-xs text-gray-500 mb-4">1 edit/day limit. Keep the vibes consistent.</p>
+          <div id="timeline-list" class="space-y-4">
+            <!-- Timeline items will be inserted here -->
+          </div>
         </div>
 
         <!-- Project 1 -->
@@ -659,19 +672,32 @@
         <!-- Project Summaries (dynamically generated) -->
         <div id="project-summaries"></div>
 
-        <!-- Edit Button -->
-        <div class="mb-4 text-center">
-          <button onclick="editCheckIn()" class="text-base font-medium text-gray-700 underline hover:text-gray-900 transition-colors bg-transparent border-0">
-            Edit
+        <!-- Edit Button / Limit Message -->
+        <div class="mb-4 text-center" id="edit-section">
+          <button id="edit-btn-success" onclick="editCheckIn()" class="text-base font-medium text-rose-400 underline hover:text-rose-500 transition-colors bg-transparent border-0">
+            Edit entry
           </button>
+          <p id="edit-subtitle" class="text-xs text-gray-400 mt-1">1 edit/day limit. Keep the vibes consistent.</p>
+          <p id="edit-limit-msg" class="hidden text-sm text-gray-500">
+            Daily edit used. Catch you tomorrow for more updates.
+          </p>
         </div>
 
         <!-- Done Button -->
         <div class="fixed bottom-0 left-0 right-0 bg-gray-50 py-6">
           <div class="max-w-md mx-auto px-4">
-            <button onclick="doneCheckIn()" class="w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500 transition-all">
-              Done
-            </button>
+            <div class="relative">
+              <!-- Progress border that follows button outline -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none" style="overflow: visible;">
+                <rect id="progress-border" x="1" y="1" width="0" height="calc(100% - 2)" rx="15" ry="15" 
+                      fill="none" stroke="#E11D48" stroke-width="3" 
+                      stroke-dasharray="1000" stroke-dashoffset="1000"
+                      style="transition: stroke-dashoffset 5s linear;"/>
+              </svg>
+              <button onclick="doneCheckIn()" class="relative w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500 transition-all">
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -683,14 +709,14 @@
     <div class="min-h-screen bg-gray-50">
       <div class="max-w-md mx-auto px-4 py-6">
         <!-- Header -->
-        <div class="flex items-center gap-4 mb-8">
+        <div class="flex items-center mb-8">
           <button onclick="goToScreen1()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.921 7.5L7.714 13.292L7 14L0 7L7 0L7.714 0.708L1.92 6.5H14V7.5H1.921Z" fill="#6B6B6B"/>
             </svg>
             <span class="text-sm">Back</span>
           </button>
-          <h1 class="text-xl font-semibold text-gray-900">Notifications</h1>
+          <h1 class="text-xl font-semibold text-gray-900 flex-1 text-center pr-14">Notifications</h1>
         </div>
 
         <!-- Empty State with visual interest -->
@@ -763,26 +789,26 @@
     <div class="min-h-screen bg-gray-50">
       <div class="max-w-md mx-auto px-4 py-6 pb-20">
         <!-- Header -->
-        <div class="flex items-center gap-4 mb-8">
+        <div class="flex items-center mb-8">
           <button onclick="goToScreen1()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.921 7.5L7.714 13.292L7 14L0 7L7 0L7.714 0.708L1.92 6.5H14V7.5H1.921Z" fill="#6B6B6B"/>
             </svg>
             <span class="text-sm">Back</span>
           </button>
-          <h1 class="text-xl font-semibold text-gray-900">Account</h1>
+          <h1 class="text-xl font-semibold text-gray-900 flex-1 text-center pr-14">Account</h1>
         </div>
 
         <!-- Profile Info Card -->
         <div class="bg-white rounded-2xl p-6 mb-4">
-          <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-end gap-4 mb-6">
             <div class="w-20 h-20 bg-cyan-100 rounded-full flex items-center justify-center text-5xl" style="border: 1px solid #EEC070;">🐄</div>
-            <div class="flex-1 flex items-center justify-between">
+            <div class="flex-1 flex items-end justify-between">
               <div>
-                <h2 class="text-xl font-bold text-gray-900">Advait Kulkarni</h2>
-                <p class="text-sm text-gray-500">Product Designer</p>
+                <h2 class="text-xl font-bold text-gray-900 leading-none">Advait Kulkarni</h2>
+                <p class="text-sm text-gray-500 mt-1">Product Designer</p>
               </div>
-              <button class="text-gray-400 hover:text-gray-600 transition-colors">
+              <button class="text-gray-400 hover:text-gray-600 transition-colors mb-0.5">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -849,10 +875,10 @@
                 <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6" id="notification-dot"></span>
               </button>
             </div>
-            <div class="border-t border-gray-200 pt-4">
+            <div class="border-t border-gray-200 pt-4" id="reminder-time-section">
               <p class="text-sm font-medium text-gray-900 mb-2">Reminder Time</p>
               <div class="relative">
-                <select class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 appearance-none text-sm text-gray-700 bg-white cursor-pointer">
+                <select id="reminder-time-select" class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-400 appearance-none text-sm text-gray-700 bg-white cursor-pointer">
                   <option>9:00 AM</option>
                   <option>10:00 AM</option>
                   <option>11:00 AM</option>
@@ -869,7 +895,7 @@
         </div>
 
         <!-- Sign Out -->
-        <button class="w-full py-4 bg-white border-2 border-red-200 rounded-2xl text-base font-medium text-red-600 hover:bg-red-50 transition-colors">
+        <button class="w-full py-4 bg-white border-2 border-red-200 rounded-2xl text-base font-medium text-red-600 hover:bg-red-50 transition-colors" style="margin-top: 150px;">
           Sign Out
         </button>
       </div>
@@ -952,6 +978,7 @@
     let project1Helper = '';
     let project2Helper = '';
     let isCheckedIn = false;
+    let editHistory = []; // Array to store edit timestamps and moods
     let isListView = false;
     let autoTransitionTimeout = null;
     let advaitSubmissionTime = null;
@@ -983,6 +1010,50 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen2').classList.add('active');
       window.scrollTo(0, 0);
+      
+      // Check if edit limit reached
+      const limitReached = editHistory.length >= 2;
+      const submitBtn = document.getElementById('submitBtn');
+      const editLimitBracket = document.getElementById('edit-limit-bracket');
+      const project1Card = document.getElementById('project1-card');
+      const project2Card = document.getElementById('project2');
+      
+      if (limitReached) {
+        // Disable project cards
+        project1Card.style.opacity = '0.5';
+        project1Card.style.pointerEvents = 'none';
+        project2Card.style.opacity = '0.5';
+        project2Card.style.pointerEvents = 'none';
+        
+        // Change button to Close
+        submitBtn.textContent = 'Close';
+        submitBtn.onclick = function() { goToScreen1(); };
+        
+        // Show bracket message
+        editLimitBracket.classList.remove('hidden');
+      } else {
+        // Enable project cards
+        project1Card.style.opacity = '1';
+        project1Card.style.pointerEvents = 'auto';
+        project2Card.style.opacity = '1';
+        project2Card.style.pointerEvents = 'auto';
+        
+        // Keep button as Submit Check-in
+        submitBtn.textContent = 'Submit Check-in';
+        submitBtn.onclick = handleSubmit;
+        
+        // Hide bracket message
+        editLimitBracket.classList.add('hidden');
+      }
+      
+      // Show edit history timeline if user is editing
+      const timeline = document.getElementById('edit-history-timeline');
+      if (isCheckedIn && editHistory.length > 0) {
+        timeline.classList.remove('hidden');
+        renderEditHistory();
+      } else {
+        timeline.classList.add('hidden');
+      }
     }
 
     // Toggle between grid and list view
@@ -1247,19 +1318,48 @@
       showConfetti();
       renderProjectSummaries();
       
-      // Start progress bar animation
-      const progressBar = document.getElementById('progress-bar');
-      if (progressBar) {
-        progressBar.style.width = '0%';
-        setTimeout(() => {
-          progressBar.style.width = '100%';
-        }, 100);
+      // Check edit limit (1 original + 1 edit = 2 total)
+      const editBtn = document.getElementById('edit-btn-success');
+      const editSubtitle = document.getElementById('edit-subtitle');
+      const editLimitMsg = document.getElementById('edit-limit-msg');
+      
+      if (editHistory.length >= 2) {
+        // Limit reached
+        editBtn.classList.add('hidden');
+        editSubtitle.classList.add('hidden');
+        editLimitMsg.classList.remove('hidden');
+      } else {
+        // Still can edit
+        editBtn.classList.remove('hidden');
+        editSubtitle.classList.remove('hidden');
+        editLimitMsg.classList.add('hidden');
+      }
+      
+      // Start progress border animation (visual only, no auto-redirect)
+      const progressBorder = document.getElementById('progress-border');
+      if (progressBorder) {
+        // Get button width and calculate perimeter
+        const button = progressBorder.parentElement.parentElement.querySelector('button');
+        const rect = button.getBoundingClientRect();
+        const width = rect.width - 2;
+        const height = rect.height - 2;
         
-        // Auto-transition after 5 seconds
-        if (autoTransitionTimeout) clearTimeout(autoTransitionTimeout);
-        autoTransitionTimeout = setTimeout(() => {
-          goToScreen1();
-        }, 5000);
+        // Update SVG rect size
+        progressBorder.setAttribute('width', width);
+        progressBorder.setAttribute('height', height);
+        
+        // Calculate perimeter of rounded rectangle (approximation)
+        const perimeter = 2 * (width + height);
+        progressBorder.setAttribute('stroke-dasharray', perimeter);
+        progressBorder.setAttribute('stroke-dashoffset', perimeter);
+        
+        // Force reflow
+        progressBorder.offsetHeight;
+        
+        // Animate stroke to 0 (complete outline)
+        setTimeout(() => {
+          progressBorder.style.strokeDashoffset = '0';
+        }, 50);
       }
     }
 
@@ -1281,17 +1381,23 @@
       notificationsEnabled = !notificationsEnabled;
       const toggle = document.getElementById('notification-toggle');
       const dot = document.getElementById('notification-dot');
+      const reminderSection = document.getElementById('reminder-time-section');
+      const reminderSelect = document.getElementById('reminder-time-select');
       
       if (notificationsEnabled) {
         toggle.classList.remove('bg-gray-200');
         toggle.classList.add('bg-rose-400');
         dot.classList.remove('translate-x-1');
         dot.classList.add('translate-x-6');
+        reminderSection.classList.remove('opacity-50', 'pointer-events-none');
+        reminderSelect.disabled = false;
       } else {
         toggle.classList.remove('bg-rose-400');
         toggle.classList.add('bg-gray-200');
         dot.classList.remove('translate-x-6');
         dot.classList.add('translate-x-1');
+        reminderSection.classList.add('opacity-50', 'pointer-events-none');
+        reminderSelect.disabled = true;
       }
     }
 
@@ -1422,9 +1528,20 @@
       advaitSubmissionTime = now; // Store submission time for timestamp calculations
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
-      const timeString = `Updated [${hours}:${minutes}]`;
+      const timeString = `Updated at ${hours}:${minutes}`;
       document.getElementById('timestamp').textContent = timeString;
       document.getElementById('home-timestamp').textContent = timeString;
+      
+      // Track edit history with all details
+      editHistory.push({
+        timestamp: now,
+        project1Mood: selectedProject1Mood,
+        project2Mood: selectedProject2Mood,
+        project1Issue: project1Issue,
+        project2Issue: project2Issue,
+        project1Helper: project1Helper,
+        project2Helper: project2Helper
+      });
       
       goToScreen3();
     }
@@ -1509,6 +1626,74 @@
       goToScreen2();
     }
 
+    // Render edit history timeline
+    function renderEditHistory() {
+      const timelineList = document.getElementById('timeline-list');
+      timelineList.innerHTML = '';
+      
+      // Reverse to show latest first
+      const reversedHistory = [...editHistory].reverse();
+      
+      reversedHistory.forEach((entry, index) => {
+        const hours = String(entry.timestamp.getHours()).padStart(2, '0');
+        const minutes = String(entry.timestamp.getMinutes()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+        
+        // Get mood emojis
+        const mood1Emoji = moodStyles[entry.project1Mood]?.emoji || '';
+        const mood2Emoji = moodStyles[entry.project2Mood]?.emoji || '';
+        
+        // Original is now the last in reversed array
+        const isOriginal = index === (reversedHistory.length - 1);
+        const label = isOriginal ? 'Original Entry' : 'Edited Entry';
+        
+        // Build issue details HTML
+        let issueDetailsHTML = '';
+        if (entry.project1Issue || entry.project2Issue) {
+          issueDetailsHTML = '<div class="mt-2 space-y-2">';
+          
+          if (entry.project1Issue) {
+            issueDetailsHTML += `
+              <div class="text-xs">
+                <p class="text-gray-700 italic">"${entry.project1Issue}"</p>
+                ${entry.project1Helper ? `<p class="text-gray-500 mt-0.5">@ ${entry.project1Helper}</p>` : ''}
+              </div>
+            `;
+          }
+          
+          if (entry.project2Issue) {
+            issueDetailsHTML += `
+              <div class="text-xs ${entry.project1Issue ? 'mt-2' : ''}">
+                <p class="text-gray-700 italic">"${entry.project2Issue}"</p>
+                ${entry.project2Helper ? `<p class="text-gray-500 mt-0.5">@ ${entry.project2Helper}</p>` : ''}
+              </div>
+            `;
+          }
+          
+          issueDetailsHTML += '</div>';
+        }
+        
+        const itemHTML = `
+          <div class="flex items-start gap-3 py-3 ${index > 0 ? 'border-t border-gray-200' : ''}">
+            <div class="flex-shrink-0 w-2 h-2 rounded-full bg-rose-400 mt-1.5"></div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-gray-900">${label}</span>
+                <span class="text-xs text-gray-400">${timeString}</span>
+              </div>
+              <div class="flex items-center gap-1 mb-1">
+                <span class="text-lg">${mood1Emoji}</span>
+                <span class="text-lg">${mood2Emoji}</span>
+              </div>
+              ${issueDetailsHTML}
+            </div>
+          </div>
+        `;
+        
+        timelineList.innerHTML += itemHTML;
+      });
+    }
+    
     function doneCheckIn() {
       // Clear auto-transition timeout if user clicks Done early
       if (autoTransitionTimeout) {
@@ -1552,14 +1737,21 @@
       
       // Update button text and style
       const btn = document.getElementById('check-in-btn');
+      const homeEditBtn = document.getElementById('home-edit-btn');
+      
       if (isCheckedIn) {
-        btn.textContent = 'Edit';
-        btn.className = 'w-full bg-transparent hover:bg-gray-50 text-rose-400 text-lg font-medium py-4 rounded-2xl mb-8 border-2 transition-all';
-        btn.style.borderColor = 'rgba(251, 113, 133, 0.5)'; // rose-400 at 50% opacity
+        // Hide the main check-in button
+        btn.classList.add('hidden');
+        // Show the view button next to timestamp
+        homeEditBtn.classList.remove('hidden');
       } else {
+        // Show the main check-in button
+        btn.classList.remove('hidden');
         btn.textContent = 'Check-in Now';
-        btn.className = 'w-full bg-rose-400 hover:bg-rose-500 text-white text-lg font-medium py-4 rounded-2xl mb-8 shadow-sm check-in-btn transition-all';
+        btn.className = 'w-full bg-rose-400 hover:bg-rose-500 text-white text-lg font-medium py-4 rounded-2xl mb-8 shadow-sm check-in-btn transition-all fade-in-up';
         btn.style.borderColor = '';
+        // Hide the view button
+        homeEditBtn.classList.add('hidden');
       }
       
       // Count blockers - both projects can be blockers
