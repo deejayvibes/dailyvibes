@@ -494,6 +494,68 @@
     </div>
   </div>
 
+  <!-- About Knock-Knock Modal -->
+  <div id="about-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto px-8 py-6 relative">
+      <!-- Close button -->
+      <button onclick="closeAboutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      
+      <!-- Logo -->
+      <div class="text-center mb-3">
+        <div style="font-family: 'Sonsie One', cursive; font-size: 28px; color: #EE7470;">Knock-Knock</div>
+      </div>
+      
+      <!-- Subheading -->
+      <h2 class="text-lg font-normal text-gray-700 text-center mb-6">Your daily 'Vibe-Check' at work</h2>
+      
+      <!-- Main content -->
+      <div class="space-y-4 text-gray-700 text-sm leading-relaxed">
+        <p>
+          Knock-Knock, a personal AI project by <span class="font-medium">Dhaneesh Jameson</span>, replaces draining, scheduled stand-ups with high-energy, &lt;30-second async "vibe-checks." Tailored for the Gen Z, remote-first workforce, it eliminates the context-switching fatigue and "performance anxiety" typical of traditional meetings across time zones.
+        </p>
+        
+        <p>
+          Rather than replacing your project management stack, Knock-Knock acts as a cultural companion, stripping the dry status update out of the calendar and turning it into a social-style pulse check.
+        </p>
+        
+        <p>
+          This approach restores individual freedom and protects deep-work blocks, replacing rigid bureaucracy with authentic, high-velocity team connection.
+        </p>
+        
+        <!-- Highlights -->
+        <div class="mt-6">
+          <h3 class="font-semibold text-gray-900 mb-3">Highlights:</h3>
+          <ul class="space-y-2 ml-4">
+            <li class="flex gap-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><span class="font-medium">Protects Deep Work:</span> Updates on your own time.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span><span class="font-medium">Vibe-First:</span> Prioritises team sentiment and authentic engagement.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-400 font-bold">•</span>
+              <span>It is designed for high-signal brevity, ensuring 'vibe-checks' remain a focused team pulse rather than a distraction from deep work or other noisy alternatives.</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Strategic Limitation -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+          <p class="text-xs text-gray-600">
+            <span class="font-semibold text-gray-900">Strategic Limitation:</span> Not a project-level task-tracker, but the essential glue for the modern remote stack.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- SCREEN 2: Check-in Page -->
   <div id="screen2" class="screen">
     <div class="min-h-screen bg-gray-50">
@@ -515,7 +577,7 @@
           <div class="flex items-baseline gap-2 mb-1">
             <h3 class="text-base font-semibold text-gray-900">Check-in History</h3>
           </div>
-          <p class="text-xs text-gray-500 mb-4">1 edit/day limit. Keep the vibes consistent.</p>
+          <p class="text-sm text-gray-500 mb-4">1 edit/day limit. Keep the vibes consistent.</p>
           <div id="timeline-list" class="space-y-4">
             <!-- Timeline items will be inserted here -->
           </div>
@@ -523,7 +585,7 @@
 
         <!-- Daily limit reached message -->
         <div id="daily-limit-message" class="hidden text-center mb-4">
-          <p class="text-xs text-gray-500">(Daily check-in limit reached)</p>
+          <p class="text-sm text-gray-500">(Daily check-in limit reached)</p>
         </div>
 
         <!-- Project 1 -->
@@ -686,7 +748,7 @@
           <button id="edit-btn-success" onclick="editCheckIn()" class="text-base font-medium text-rose-400 underline hover:text-rose-500 transition-colors bg-transparent border-0">
             Edit entry
           </button>
-          <p id="edit-subtitle" class="text-xs text-gray-400 mt-1">1 edit/day limit. Keep the vibes consistent.</p>
+          <p id="edit-subtitle" class="text-sm text-gray-400 mt-1">1 edit/day limit. Keep the vibes consistent.</p>
           <p id="edit-limit-msg" class="hidden text-sm text-gray-500">
             Daily check-in limit reached. Catch you tomorrow for more updates.
           </p>
@@ -946,8 +1008,15 @@
           </div>
         </div>
 
+        <!-- About Knock-Knock Link -->
+        <div class="text-center" style="margin-top: 150px; margin-bottom: 40px;">
+          <button onclick="openAboutModal()" class="text-base font-medium text-rose-400 hover:text-rose-500 underline transition-colors bg-transparent border-0">
+            About Knock-Knock
+          </button>
+        </div>
+
         <!-- Sign Out -->
-        <button class="w-full py-4 bg-white border-2 border-red-200 rounded-2xl text-base font-medium text-red-600 hover:bg-red-50 transition-colors" style="margin-top: 150px;">
+        <button class="w-full py-4 bg-white border-2 border-red-200 rounded-2xl text-base font-medium text-red-600 hover:bg-red-50 transition-colors">
           Sign Out
         </button>
       </div>
@@ -1408,6 +1477,18 @@
     // Close issue modal
     function closeIssueModal() {
       document.getElementById('issue-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    
+    // Open About modal
+    function openAboutModal() {
+      document.getElementById('about-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Close About modal
+    function closeAboutModal() {
+      document.getElementById('about-modal').classList.add('hidden');
       document.body.style.overflow = '';
     }
     
