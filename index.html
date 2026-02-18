@@ -10,13 +10,48 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes hourglassFlip {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      40% { transform: rotate(180deg) scale(1); }
-      60% { transform: rotate(180deg) scale(1.1); }
+      0% { 
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      45% { 
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      47% {
+        transform: rotate(0deg);
+        opacity: 0.8;
+      }
+      48% { 
+        transform: rotate(180deg);
+        opacity: 0.6;
+      }
+      49% { 
+        transform: rotate(360deg);
+        opacity: 0.8;
+      }
+      50% { 
+        transform: rotate(540deg);
+        opacity: 0.6;
+      }
+      51% {
+        transform: rotate(720deg);
+        opacity: 0.8;
+      }
+      53% {
+        transform: rotate(720deg);
+        opacity: 1;
+      }
+      100% { 
+        transform: rotate(720deg);
+        opacity: 1;
+      }
     }
     
     .hourglass-animate {
-      animation: hourglassFlip 3s ease-in-out infinite;
+      animation: hourglassFlip 6s ease-in-out infinite;
+      display: inline-block;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
     }
     
     @keyframes fadeInUp {
@@ -553,7 +588,7 @@
           <!-- Closing statement -->
           <div class="mt-6 p-4 bg-gray-50 rounded-xl">
             <p class="text-sm text-gray-700 leading-relaxed">
-              Think of it as the social-style pulse check for your work crew. It's fast, it's authentic, and it protects your "do not disturb" mode like a hawk. High-velocity connection; zero corporate drag.
+              Think of it as the social-style pulse check for your work crew. After all, if your stand-up takes longer than a knock-knock joke, it's not a stand-up. If you're being dragged into a meeting when you're in the zone, the joke's on you.
             </p>
           </div>
           
@@ -569,7 +604,7 @@
   <!-- SCREEN 2: Check-in Page -->
   <div id="screen2" class="screen">
     <div class="min-h-screen bg-gray-50">
-      <div class="max-w-md mx-auto px-4 py-6 pb-32">
+      <div class="max-w-md mx-auto px-4 py-6 pb-48">
 
 
         <div class="flex items-center mb-8">
@@ -579,13 +614,13 @@
             </svg>
             <span class="text-sm">Back</span>
           </button>
-          <h1 class="text-xl font-semibold text-gray-900 flex-1 text-center pr-14">Your vibe for the day</h1>
+          <h1 class="text-xl font-semibold text-gray-900 flex-1 text-center pr-14">What's the vibe today?</h1>
         </div>
 
         <!-- Update History Timeline (moved to top when editing) -->
         <div id="edit-history-timeline" class="hidden pb-6 mb-4">
           <div class="flex items-baseline gap-2 mb-1">
-            <h3 class="text-base font-semibold text-gray-900">Check-in History</h3>
+            <h3 class="text-base font-semibold text-gray-900">Check-ins of the day</h3>
           </div>
           <div id="timeline-list" class="space-y-4">
             <!-- Timeline items will be inserted here -->
@@ -594,7 +629,7 @@
 
         <!-- Edit available message (shown when 1 edit left) -->
         <div id="edit-available-message" class="hidden text-center mb-4">
-          <p class="text-sm text-gray-500">1 edit/day limit. Keep the vibes consistent.</p>
+          <p class="text-sm text-gray-500">One edit left. Use it wisely, or don't use it at all.</p>
         </div>
 
         <!-- Daily limit reached message -->
@@ -762,7 +797,7 @@
           <button id="edit-btn-success" onclick="editCheckIn()" class="text-base font-medium text-rose-400 underline hover:text-rose-500 transition-colors bg-transparent border-0">
             Edit entry
           </button>
-          <p id="edit-subtitle" class="text-sm text-gray-400 mt-1">1 edit/day limit. Keep the vibes consistent.</p>
+          <p id="edit-subtitle" class="text-sm text-gray-400 mt-1">One edit left. Use it wisely, or don't use it at all.</p>
           <p id="edit-limit-msg" class="hidden text-sm text-gray-500">
             Daily check-in limit reached. Catch you tomorrow for more updates.
           </p>
@@ -1164,6 +1199,16 @@
         originalState = null;
       }
       
+      // If user has NOT checked in yet and navigates back, clear everything
+      if (!isCheckedIn) {
+        selectedProject1Mood = null;
+        selectedProject2Mood = null;
+        project1Issue = '';
+        project2Issue = '';
+        project1Helper = '';
+        project2Helper = '';
+      }
+      
       // Reset toggle to grid view (off state)
       if (isListView) {
         toggleView();
@@ -1244,8 +1289,8 @@
           editAvailableMessage.classList.remove('hidden');
           dailyLimitMessage.classList.add('hidden');
         } else {
-          // User is creating first check-in
-          discardBtn.classList.add('hidden');
+          // User is creating first check-in - also show Discard button
+          discardBtn.classList.remove('hidden');
           submitBtn.textContent = 'Submit Check-in';
           submitBtn.disabled = false;
           submitBtn.className = 'submit-btn w-full py-4 rounded-2xl text-lg font-medium bg-rose-400 text-white hover:bg-rose-500';
@@ -1254,6 +1299,9 @@
           // Hide both messages for first check-in
           editAvailableMessage.classList.add('hidden');
           dailyLimitMessage.classList.add('hidden');
+          
+          // Lock project 2 initially for first-time users
+          lockSecondProject();
         }
       }
       
@@ -1775,14 +1823,27 @@
     
     // Discard changes and return to home
     function discardChanges() {
-      // Restore original state
-      if (originalState) {
+      if (isCheckedIn && originalState) {
+        // User was editing - restore original state
         selectedProject1Mood = originalState.project1Mood;
         selectedProject2Mood = originalState.project2Mood;
         project1Issue = originalState.project1Issue;
         project2Issue = originalState.project2Issue;
         project1Helper = originalState.project1Helper;
         project2Helper = originalState.project2Helper;
+      } else {
+        // User was on first-time entry - clear all selections (don't store anything)
+        selectedProject1Mood = null;
+        selectedProject2Mood = null;
+        project1Issue = '';
+        project2Issue = '';
+        project1Helper = '';
+        project2Helper = '';
+        
+        // Clear the UI selections for first-time entry
+        clearAllMoodSelections();
+        clearFormFields();
+        lockSecondProject(); // Lock project 2 again
       }
       
       // Reset change tracking
@@ -1791,6 +1852,71 @@
       
       // Go back to home
       goToScreen1();
+    }
+    
+    // Helper function to clear all mood button selections
+    function clearAllMoodSelections() {
+      // Reset all project 1 mood buttons
+      ['Vibing', 'Flowing', 'Struggling', 'Blocked'].forEach(mood => {
+        const btn = document.querySelector('.mood-1-' + mood.toLowerCase());
+        if (btn) {
+          btn.style.backgroundColor = '#F9FAFB';
+          btn.style.borderColor = '#E5E7EB';
+          btn.style.borderWidth = '2px';
+          btn.style.boxShadow = 'none';
+          btn.style.transform = 'scale(1)';
+          btn.querySelector('span:last-child').className = 'text-xs font-medium text-gray-600';
+        }
+      });
+      
+      // Reset all project 2 mood buttons
+      ['Vibing', 'Flowing', 'Struggling', 'Blocked'].forEach(mood => {
+        const btn = document.querySelector('.mood-2-' + mood.toLowerCase());
+        if (btn) {
+          btn.style.backgroundColor = '#F9FAFB';
+          btn.style.borderColor = '#E5E7EB';
+          btn.style.borderWidth = '2px';
+          btn.style.boxShadow = 'none';
+          btn.style.transform = 'scale(1)';
+          btn.querySelector('span:last-child').className = 'text-xs font-medium text-gray-600';
+        }
+      });
+    }
+    
+    // Helper function to clear form fields
+    function clearFormFields() {
+      const project1Issue = document.getElementById('project1-issue');
+      const project2Issue = document.getElementById('project2-issue');
+      const project1Helper = document.getElementById('project1-helper');
+      const project2Helper = document.getElementById('project2-helper');
+      
+      if (project1Issue) project1Issue.value = '';
+      if (project2Issue) project2Issue.value = '';
+      if (project1Helper) project1Helper.value = '';
+      if (project2Helper) project2Helper.value = '';
+      
+      // Hide additional fields
+      document.getElementById('project1-fields').classList.remove('show');
+      document.getElementById('project2-fields').classList.remove('show');
+    }
+    
+    // Helper function to lock second project
+    function lockSecondProject() {
+      const project2Card = document.getElementById('project2');
+      const project2LockedMsg = document.getElementById('project2-locked-msg');
+      const project2Moods = document.getElementById('project2-moods');
+      
+      // Lock project 2
+      project2Card.className = 'bg-white rounded-2xl p-6 mb-4 border-2 border-dashed border-gray-300';
+      project2Card.querySelector('h2').className = 'text-lg font-semibold text-gray-400';
+      project2Card.querySelector('span').className = 'text-sm text-gray-300';
+      
+      // Show locked message, hide mood buttons
+      project2LockedMsg.classList.remove('hidden');
+      project2Moods.classList.add('hidden');
+      
+      // Hide additional fields
+      document.getElementById('project2-fields').classList.remove('show');
     }
 
     // Submit
@@ -2030,9 +2156,9 @@
           <div class="flex items-start gap-3 py-3 ${index > 0 ? 'border-t border-gray-200' : ''}">
             <div class="flex-shrink-0 w-2 h-2 rounded-full bg-rose-400 mt-1.5"></div>
             <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs text-gray-400">Time: ${timeString}</span>
+              <div class="mb-1">
                 <span class="text-sm font-medium text-gray-900">${label}</span>
+                <p class="text-xs text-gray-400 mt-0.5">Time: ${timeString}</p>
               </div>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5 text-xs text-gray-600">
@@ -2170,7 +2296,7 @@
       // Clear any existing interval
       stopCoinFlip();
       
-      // Start the coin flip cycle: flip every 6 seconds
+      // Start the coin flip cycle: flip every 10 seconds
       coinFlipInterval = setInterval(() => {
         const container = document.getElementById('badge-flip-container');
         if (container) {
@@ -2178,12 +2304,12 @@
           container.style.transform = 'rotateY(180deg)';
           container.style.transition = 'transform 0.6s ease-in-out';
           
-          // Flip back after 2 seconds
+          // Flip back after 4 seconds (checkmark visible for 4s)
           setTimeout(() => {
             container.style.transform = 'rotateY(0deg)';
-          }, 2000);
+          }, 4000);
         }
-      }, 6000);
+      }, 10000);
     }
     
     function stopCoinFlip() {
